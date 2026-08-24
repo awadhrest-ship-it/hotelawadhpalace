@@ -115,7 +115,7 @@ export function createApp() {
       res.sendFile(path.join(clientDist, 'index.html'));
     });
   } else if (env.nodeEnv === 'production') {
-    app.get('/', (req, res) => res.json({ success: true, message: 'Sharan Resort & Hotel API is running.' }));
+    app.get('/', (req, res) => res.json({ success: true, message: 'Hotel Awadh Palace API is running.' }));
   }
 
   app.use(notFound);

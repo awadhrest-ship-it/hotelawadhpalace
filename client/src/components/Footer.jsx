@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="col-lg-6 col-md-12">
                 <div className="newsletter-f-left">
                   <h3 className="text-uppercase m-t0 m-b10">Subscribe to our newsletter!</h3>
-                  <p>Never miss an offer from Sharan Resort &amp; Hotel by signing up to our newsletter.</p>
+                  <p>Never miss an offer from Hotel Awadh Palace by signing up to our newsletter.</p>
                 </div>
               </div>
               <div className="col-lg-6 col-md-12">
@@ -32,7 +32,7 @@ export default function Footer() {
               <div className="widget widget_about">
                 <div className="logo-footer clearfix p-b15">
                   <Link to="/">
-                    <img src="/assets/images/logo-dark.png" alt="Sharan Resort & Hotel" />
+                    <img src="/assets/images/logo-dark.png" alt="Hotel Awadh Palace" />
                   </Link>
                 </div>
                 <p className="max-w400">
@@ -94,7 +94,7 @@ export default function Footer() {
                 <h3 className="widget-title">Contact Us</h3>
                 <ul className="widget_address">
                   <li><i className="sl-icon-map site-text-primary" /> 123 Ocean Drive, Paradise Coast</li>
-                  <li><i className="sl-icon-envolope-letter site-text-primary" /> info@sharanresort.test</li>
+                  <li><i className="sl-icon-envolope-letter site-text-primary" /> info@hotelawadhpalace.test</li>
                   <li><i className="sl-icon-phone site-text-primary" /> (+1) 234 567 8900</li>
                 </ul>
               </div>
@@ -109,7 +109,7 @@ export default function Footer() {
           <div className="row">
             <div className="wt-footer-bot-center">
               <span className="copyrights-text">
-                &copy; {new Date().getFullYear()} Sharan Resort &amp; Hotel. All rights reserved.
+                &copy; {new Date().getFullYear()} Hotel Awadh Palace. All rights reserved.
               </span>
             </div>
           </div>

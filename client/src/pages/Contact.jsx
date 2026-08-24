@@ -43,7 +43,7 @@ export default function Contact() {
                     <div className="icon-xs"><i className="fa fa-envelope" /></div>
                     <div className="icon-content">
                       <h3 className="m-t0 font-weight-500">Email address</h3>
-                      <p>{settings?.email || 'info@sharanresort.test'}</p>
+                      <p>{settings?.email || 'info@hotelawadhpalace.test'}</p>
                     </div>
                   </div>
 
@@ -66,7 +66,7 @@ export default function Contact() {
           <div className="gmap-outline">
             <div className="google-map-gray google-map">
               <iframe
-                title="Sharan Resort & Hotel location"
+                title="Hotel Awadh Palace location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387191.33750346623!2d-73.97968099999999!3d40.6974881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sin!4v1671883239943!5m2!1sen!2sin"
                 width="600"
                 height="450"

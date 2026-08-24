@@ -45,7 +45,7 @@ export default function AdminLayout() {
         .admin-main-scroll { scrollbar-width: thin; scrollbar-color: #d8d2c4 transparent; }
       `}</style>
       <aside style={styles.sidebar} className="admin-sidebar-scroll">
-        <div style={styles.brand}>Sharan Admin</div>
+        <div style={styles.brand}>Awadh Palace Admin</div>
         <nav>
           {LINKS.map((link) => (
             <NavLink

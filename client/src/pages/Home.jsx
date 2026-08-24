@@ -154,9 +154,9 @@ function HeroSlider({ heroes }) {
 
   if (!heroes || heroes.length === 0) {
     return (
-      <HeroSlide imageUrl="/assets/images/main-slider/slider1/slide1.jpg" imageAlt="Sharan Resort & Hotel">
+      <HeroSlide imageUrl="/assets/images/main-slider/slider1/slide1.jpg" imageAlt="Hotel Awadh Palace">
         <HeroText
-          title="Welcome to Sharan Resort & Hotel"
+          title="Welcome to Hotel Awadh Palace"
           subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
         />
       </HeroSlide>
@@ -196,7 +196,7 @@ function HeroSlider({ heroes }) {
                 </div>
               ) : (
                 <HeroText
-                  title="Welcome to Sharan Resort & Hotel"
+                  title="Welcome to Hotel Awadh Palace"
                   subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
                 />
               )}
@@ -258,7 +258,7 @@ function AboutSlider() {
       {ABOUT_SLIDES.map((n) => (
         <div className="item" key={n}>
           <div className="home-about-slider-pic">
-            <img src={`/assets/images/about/pic${n}.jpg`} alt={`About Sharan ${n}`} />
+            <img src={`/assets/images/about/pic${n}.jpg`} alt={`About Awadh Palace ${n}`} />
           </div>
         </div>
       ))}
@@ -614,7 +614,7 @@ export default function Home() {
           <div className="row d-flex align-items-center">
             <div className="col-lg-6 col-md-12 text-black">
               <div className="section-head text-left">
-                <h2 className="m-b5" data-title="About">About Sharan</h2>
+                <h2 className="m-b5" data-title="About">About Awadh Palace</h2>
                 <div className="wt-separator-outer">
                   <div className="wt-separator site-bg-primary" />
                 </div>

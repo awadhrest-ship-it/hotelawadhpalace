@@ -19,14 +19,14 @@ export default function About() {
             <div className="row d-flex align-items-center">
               <div className="col-lg-6 col-md-12 text-black">
                 <div className="section-head text-left">
-                  <h2 className="m-b5" data-title="About">About Sharan</h2>
+                  <h2 className="m-b5" data-title="About">About Awadh Palace</h2>
                   <div className="wt-separator-outer">
                     <div className="wt-separator site-bg-primary" />
                   </div>
                 </div>
                 <h3 className="m-t0">We will be so proud to have you as our guest.</h3>
                 <p>
-                  Sharan Resort &amp; Hotel was founded on a simple idea: hospitality should feel personal.
+                  Hotel Awadh Palace was founded on a simple idea: hospitality should feel personal.
                   Every room, every meal, and every interaction is designed around our guests&rsquo; comfort
                   and wellbeing.
                 </p>
@@ -50,7 +50,7 @@ export default function About() {
               <div className="col-lg-6 col-md-12">
                 <img
                   src="/assets/images/about/pic1.jpg"
-                  alt="Sharan Resort & Hotel"
+                  alt="Hotel Awadh Palace"
                   style={{ width: '100%', borderRadius: 4 }}
                 />
               </div>
@@ -75,7 +75,7 @@ export default function About() {
             <div className="col-md-6">
               <h3 className="m-t0 text-white">Discover a hotel that defines a new dimension of luxury.</h3>
               <p className="text-white">
-                From the ocean-view suites to the quiet garden courtyards, every corner of Sharan is
+                From the ocean-view suites to the quiet garden courtyards, every corner of Awadh Palace is
                 designed for rest, celebration, and connection.
               </p>
               <div className="section-content">

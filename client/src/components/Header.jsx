@@ -80,7 +80,7 @@ export default function Header() {
             <div className="logo-header">
               <div className="logo-header-inner logo-header-one">
                 <Link to="/">
-                  <img src="/assets/images/logo-light.png" alt="Sharan Resort & Hotel" />
+                  <img src="/assets/images/logo-light.png" alt="Hotel Awadh Palace" />
                 </Link>
               </div>
             </div>

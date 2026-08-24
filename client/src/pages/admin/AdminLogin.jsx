@@ -29,7 +29,7 @@ export default function AdminLogin() {
   return (
     <div style={styles.wrap}>
       <form style={styles.card} onSubmit={submit}>
-        <h2 style={{ marginTop: 0 }}>Sharan Admin</h2>
+        <h2 style={{ marginTop: 0 }}>Awadh Palace Admin</h2>
         {error && <p style={styles.error}>{error}</p>}
         <label style={styles.label}>Email</label>
         <input
