@@ -35,13 +35,34 @@ const __dirname = path.dirname(__filename);
 export function createApp() {
   const app = express();
 
+  // Render (and most PaaS hosts) put the app behind a reverse proxy.
+  // Without this, express-rate-limit throws on every request because it
+  // sees an X-Forwarded-For header while 'trust proxy' is still false,
+  // and secure cookies / req.ip resolution also break behind the proxy.
+  app.set('trust proxy', 1);
+
   app.use(helmet({ crossOriginResourcePolicy: false }));
-  // Normalize away a trailing slash so CLIENT_URL="https://x.vercel.app/"
-  // still matches the browser's Origin header "https://x.vercel.app".
-  const allowedOrigin = env.clientUrl.replace(/\/$/, '');
+
+  // CLIENT_URL can be a single origin or a comma-separated list (handy for
+  // supporting a Vercel production URL + preview deployments at once).
+  // Each entry is trimmed and has any trailing slash stripped so
+  // "https://x.vercel.app/" still matches the browser's Origin header
+  // "https://x.vercel.app".
+  const allowedOrigins = env.clientUrl
+    .split(',')
+    .map((o) => o.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+
+  // eslint-disable-next-line no-console
+  console.log('[cors] allowed origins:', allowedOrigins);
+
   app.use(cors({
     origin(origin, callback) {
-      if (!origin || origin === allowedOrigin) return callback(null, true);
+      // No Origin header = same-origin request, curl, server-to-server, etc.
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin.replace(/\/$/, ''))) return callback(null, true);
+      // eslint-disable-next-line no-console
+      console.warn(`[cors] rejected origin "${origin}" — not in CLIENT_URL (${allowedOrigins.join(', ')})`);
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
@@ -54,7 +75,13 @@ export function createApp() {
     app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
   }
 
-  app.get('/api/health', (req, res) => res.json({ success: true, status: 'ok', env: env.nodeEnv }));
+  app.get('/api/health', (req, res) => res.json({
+    success: true,
+    status: 'ok',
+    env: env.nodeEnv,
+    allowedOrigins,
+    receivedOrigin: req.headers.origin || null,
+  }));
 
   app.use('/api/auth', authRoutes);
   app.use('/api/rooms', roomRoutes);
