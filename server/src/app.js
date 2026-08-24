@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import { env } from './config/env.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
@@ -35,7 +36,16 @@ export function createApp() {
   const app = express();
 
   app.use(helmet({ crossOriginResourcePolicy: false }));
-  app.use(cors({ origin: env.clientUrl, credentials: true }));
+  // Normalize away a trailing slash so CLIENT_URL="https://x.vercel.app/"
+  // still matches the browser's Origin header "https://x.vercel.app".
+  const allowedOrigin = env.clientUrl.replace(/\/$/, '');
+  app.use(cors({
+    origin(origin, callback) {
+      if (!origin || origin === allowedOrigin) return callback(null, true);
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  }));
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
@@ -65,14 +75,20 @@ export function createApp() {
   app.use('/api/team', teamRoutes);
   app.use('/api/specialization', specializationRoutes);
   
-  // Serve the built React app in production
-  if (env.nodeEnv === 'production') {
-    const clientDist = path.join(__dirname, '../../client/dist');
+  // Serve the built React app in production — only when it's actually
+  // present in this deployment (e.g. a single combined deploy). When the
+  // client is deployed separately (Render for the API + Vercel for the
+  // client), client/dist won't exist here, so this block is skipped and
+  // the API-only server just answers /api/* requests.
+  const clientDist = path.join(__dirname, '../../client/dist');
+  if (env.nodeEnv === 'production' && fs.existsSync(clientDist)) {
     app.use(express.static(clientDist));
     app.get('*', (req, res, next) => {
       if (req.path.startsWith('/api')) return next();
       res.sendFile(path.join(clientDist, 'index.html'));
     });
+  } else if (env.nodeEnv === 'production') {
+    app.get('/', (req, res) => res.json({ success: true, message: 'Sharan Resort & Hotel API is running.' }));
   }
 
   app.use(notFound);
