@@ -3769,7 +3769,7 @@ ol.comment-list li.comment .comment-respond .comment-form p {	padding:0 15px !im
 /*-------------------------------------
 	1. logo for header 
 -------------------------------------*/
-.logo-header{ display:table; float:left;  width:170px; height:70px; vertical-align:middle;  padding:0;  font-size:36px;   color:#1bbce8; margin-top:0; margin-bottom:0; margin-left:0; margin-right:0; position:relative; z-index:11;}
+.logo-header{ display:table; float:left;  width:130px; height:55px; vertical-align:middle;  padding:0;  font-size:36px;   color:#1bbce8; margin-top:0; margin-bottom:0; margin-left:0; margin-right:0; position:relative; z-index:11;}
 .logo-header-inner {  display:table-cell; vertical-align:middle; height:100%;}
 .logo-header-inner img{  max-width:100%; max-height:100%;}
 
