@@ -34,16 +34,33 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const headerRef = useRef(null);
+  // Waypoint.Sticky needs to sit on the same element the theme CSS expects
+  // (.sticky-header) — not the outer <header> — otherwise `.is-fixed` and
+  // `.color-fill` never land where `.header-style-1 .is-fixed.color-fill
+  // .main-bar` (the solid background once scrolled) is looking for them.
+  const stickyRef = useRef(null);
 
   // Sticky header behaviour, ported from the original Waypoint.Sticky call in custom.js
   useEffect(() => {
     const $ = window.jQuery;
     const Waypoint = window.Waypoint;
-    if (!$ || !Waypoint || !headerRef.current) return undefined;
-    const sticky = new Waypoint.Sticky({ element: $(headerRef.current) });
+    if (!$ || !Waypoint || !stickyRef.current) return undefined;
+    const sticky = new Waypoint.Sticky({ element: $(stickyRef.current) });
     return () => {
       if (sticky && sticky.destroy) sticky.destroy();
     };
+  }, []);
+
+  // Solid header background once scrolled, ported from color_fill_header()
+  // in custom.js (it toggled `.color-fill` on whatever held `.is-fixed`).
+  useEffect(() => {
+    const onScroll = () => {
+      if (!stickyRef.current) return;
+      stickyRef.current.classList.toggle('color-fill', window.scrollY >= 100);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const toggleSubmenu = (label) => {
@@ -57,7 +74,7 @@ export default function Header() {
         drawerOpen ? ' active' : ''
       }`}
     >
-      <div className="sticky-header main-bar-wraper">
+      <div ref={stickyRef} className="sticky-header main-bar-wraper">
         <div className="main-bar p-t5">
           <div className="container">
             <div className="logo-header">

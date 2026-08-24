@@ -15,6 +15,69 @@ const ICON_BOXES = [
 
 const ABOUT_SLIDES = [1, 2, 3, 4, 5];
 
+// Shared hero sizing/position — kept in one place so every hero (with or
+// without CMS data) renders at the exact same size and position.
+//
+// The hero photo is a real <img> in normal flow (height:auto), not a CSS
+// background — a CSS background always has to be cropped ('cover') or
+// letterboxed ('contain') to fill a fixed box. Using an <img> means the
+// box's height simply becomes whatever the image's own aspect ratio
+// needs, so the entire uploaded photo is always visible, nothing is
+// ever cropped top or bottom, and the text overlay (positioned
+// absolutely, vertically centered via the theme's `.wt-bnr-inr-entry`
+// table-cell trick — same mechanism PageBanner.jsx already uses) simply
+// sizes itself to match.
+const HERO_MIN_HEIGHT = 420;
+
+const HERO_TITLE_STYLE = {
+  maxWidth: 700,
+  fontSize: 'clamp(30px, 4.4vw, 56px)',
+  lineHeight: 1.25,
+  marginBottom: 20,
+  textShadow: '0 2px 12px rgba(0,0,0,0.35)',
+};
+
+const HERO_SUBTITLE_STYLE = {
+  maxWidth: 560,
+  fontSize: 'clamp(15px, 1.6vw, 18px)',
+  marginBottom: 30,
+  textShadow: '0 1px 6px rgba(0,0,0,0.3)',
+};
+
+function HeroText({ title, subtitle }) {
+  return (
+    <div>
+      <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
+        {title}
+      </h1>
+      <p className="text-white" style={HERO_SUBTITLE_STYLE}>
+        {subtitle}
+      </p>
+      <Link to="/rooms" className="btn-half site-button button-lg">
+        <span>Explore Rooms</span><em />
+      </Link>
+    </div>
+  );
+}
+
+function HeroSlide({ imageUrl, imageAlt, children }) {
+  return (
+    <div className="wt-bnr-inr overlay-wraper" style={{ position: 'relative' }}>
+      <img
+        src={imageUrl}
+        alt={imageAlt || ''}
+        style={{ display: 'block', width: '100%', height: 'auto', minHeight: HERO_MIN_HEIGHT, objectFit: 'cover' }}
+      />
+      <div className="overlay-main bg-black opacity-05" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
+      <div className="container" style={{ position: 'absolute', top: 0, left: '50%', right: 'auto', bottom: 0, transform: 'translateX(-50%)', zIndex: 2, width: '100%' }}>
+        <div className="wt-bnr-inr-entry" style={{ textAlign: 'left', height: '100%' }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HeroSlider({ heroes }) {
   const ref = useOwlCarousel(
     {
@@ -31,87 +94,43 @@ function HeroSlider({ heroes }) {
 
   if (!heroes || heroes.length === 0) {
     return (
-      <div
-        className="wt-bnr-inr overlay-wraper bg-parallax bg-top-center"
-        style={{
-          backgroundImage: 'url(/assets/images/main-slider/1.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          minHeight: '700px',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        <div className="overlay-main bg-black opacity-04" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
-        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-          <h1 className="text-white font-weight-900" style={{ maxWidth: 700, fontSize: 56, lineHeight: 1.2, marginBottom: 20 }}>
-            Welcome to Sharan Resort &amp; Hotel
-          </h1>
-          <p className="text-white" style={{ maxWidth: 560, fontSize: 18, marginBottom: 30 }}>
-            A place where comfort meets elegance. Book your stay and experience genuine hospitality.
-          </p>
-          <Link to="/rooms" className="btn-half site-button button-lg">
-            <span>Explore Rooms</span><em />
-          </Link>
-        </div>
-      </div>
+      <HeroSlide imageUrl="/assets/images/main-slider/slider1/slide1.jpg" imageAlt="Sharan Resort & Hotel">
+        <HeroText
+          title="Welcome to Sharan Resort & Hotel"
+          subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
+        />
+      </HeroSlide>
     );
   }
 
   return (
-    <div ref={ref} className="owl-carousel owl-hero-slider" style={{ minHeight: '700px' }}>
+    <div ref={ref} className="owl-carousel owl-hero-slider">
       {heroes.map((hero) => (
         <div key={hero._id} className="item">
-          <div
-            className="wt-bnr-inr overlay-wraper"
-            style={{
-              backgroundImage: `url('${hero.image.url}')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundAttachment: 'fixed',
-              minHeight: '700px',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              overflow: 'hidden',
-            }}
-          >
-            <div className="overlay-main bg-black opacity-04" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
-            <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
-              {hero.title || hero.subtitle ? (
-                <div>
-                  {hero.title && (
-                    <h1 className="text-white font-weight-900" style={{ maxWidth: 900, fontSize: 56, lineHeight: 1.2, marginBottom: 20 }}>
-                      {hero.title}
-                    </h1>
-                  )}
-                  {hero.subtitle && (
-                    <p className="text-white" style={{ maxWidth: 700, fontSize: 18, marginBottom: 30 }}>
-                      {hero.subtitle}
-                    </p>
-                  )}
-                  <Link to="/rooms" className="btn-half site-button button-lg">
-                    <span>Explore Rooms</span><em />
-                  </Link>
-                </div>
-              ) : (
-                <div>
-                  <h1 className="text-white font-weight-900" style={{ maxWidth: 700, fontSize: 56, lineHeight: 1.2, marginBottom: 20 }}>
-                    Welcome to Sharan Resort &amp; Hotel
+          <HeroSlide imageUrl={hero.image.url} imageAlt={hero.title}>
+            {hero.title || hero.subtitle ? (
+              <div>
+                {hero.title && (
+                  <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
+                    {hero.title}
                   </h1>
-                  <p className="text-white" style={{ maxWidth: 560, fontSize: 18, marginBottom: 30 }}>
-                    A place where comfort meets elegance. Book your stay and experience genuine hospitality.
+                )}
+                {hero.subtitle && (
+                  <p className="text-white" style={HERO_SUBTITLE_STYLE}>
+                    {hero.subtitle}
                   </p>
-                  <Link to="/rooms" className="btn-half site-button button-lg">
-                    <span>Explore Rooms</span><em />
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+                <Link to="/rooms" className="btn-half site-button button-lg">
+                  <span>Explore Rooms</span><em />
+                </Link>
+              </div>
+            ) : (
+              <HeroText
+                title="Welcome to Sharan Resort & Hotel"
+                subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
+              />
+            )}
+          </HeroSlide>
         </div>
       ))}
     </div>
