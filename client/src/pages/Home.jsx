@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
 import BookingSearchForm from '../components/BookingSearchForm';
@@ -80,6 +80,12 @@ function HeroSlide({ imageUrl, imageAlt, children }) {
 }
 
 function HeroSlider({ heroes }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hoverDir, setHoverDir] = useState(null); // 'prev' | 'next' | null
+  const [showLabel, setShowLabel] = useState(false);
+  const hoverTimer = useRef(null);
+  const labelTimer = useRef(null);
+
   const ref = useOwlCarousel(
     {
       loop: heroes.length > 1,
@@ -93,6 +99,59 @@ function HeroSlider({ heroes }) {
     [heroes.length]
   );
 
+  // Track which slide is actually showing so the hover-preview thumbnail
+  // can work out what the *next*/*previous* slide will be. relative()
+  // converts owl's internal (clone-inclusive) index back to a plain
+  // 0-based index into `heroes`.
+  useEffect(() => {
+    const $ = window.jQuery;
+    if (!$ || !ref.current || heroes.length < 2) return undefined;
+    const $el = $(ref.current);
+    const onChanged = (e) => {
+      if (typeof e.item?.index !== 'number' || !e.relatedTarget?.relative) return;
+      setActiveIndex(e.relatedTarget.relative(e.item.index));
+    };
+    $el.on('changed.owl.carousel', onChanged);
+    return () => $el.off('changed.owl.carousel', onChanged);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heroes.length]);
+
+  const goTo = (dir) => {
+    const $ = window.jQuery;
+    if (!$ || !ref.current) return;
+    $(ref.current).trigger(dir === 'next' ? 'next.owl.carousel' : 'prev.owl.carousel');
+  };
+
+  // Two-stage reveal to match the reference: the thumbnail image fades in
+  // first, then the "Click" label fades in underneath it a beat later.
+  const showPreview = (dir) => {
+    clearTimeout(hoverTimer.current);
+    clearTimeout(labelTimer.current);
+    hoverTimer.current = setTimeout(() => {
+      setHoverDir(dir);
+      labelTimer.current = setTimeout(() => setShowLabel(true), 260);
+    }, 120);
+  };
+  const hidePreview = () => {
+    clearTimeout(hoverTimer.current);
+    clearTimeout(labelTimer.current);
+    setShowLabel(false);
+    setHoverDir(null);
+  };
+
+  // Delegated hover detection: Owl Carousel injects the .owl-prev/.owl-next
+  // buttons into the DOM itself (they're not React elements), so listening
+  // on the carousel root and checking e.target lets React's normal event
+  // bubbling pick up hovers over them without touching the plugin's markup.
+  const handleMouseOver = (e) => {
+    if (heroes.length < 2) return;
+    if (e.target.closest('.owl-next')) showPreview('next');
+    else if (e.target.closest('.owl-prev')) showPreview('prev');
+  };
+  const handleMouseOut = (e) => {
+    if (e.target.closest('.owl-next') || e.target.closest('.owl-prev')) hidePreview();
+  };
+
   if (!heroes || heroes.length === 0) {
     return (
       <HeroSlide imageUrl="/assets/images/main-slider/slider1/slide1.jpg" imageAlt="Sharan Resort & Hotel">
@@ -104,36 +163,90 @@ function HeroSlider({ heroes }) {
     );
   }
 
+  const previewIndex = hoverDir
+    ? (activeIndex + (hoverDir === 'next' ? 1 : -1) + heroes.length) % heroes.length
+    : null;
+  const previewHero = previewIndex !== null ? heroes[previewIndex] : null;
+  // Hugs the arrow button directly: the nav buttons are 35px wide, sat
+  // flush against the container edge (left:0 / right:0), so 42px leaves
+  // just a small gap instead of floating off in open space.
+  const edgeOffset = 42;
+
   return (
-    <div ref={ref} className="owl-carousel owl-hero-slider">
-      {heroes.map((hero) => (
-        <div key={hero._id} className="item">
-          <HeroSlide imageUrl={hero.image.url} imageAlt={hero.title}>
-            {hero.title || hero.subtitle ? (
-              <div>
-                {hero.title && (
-                  <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
-                    {hero.title}
-                  </h1>
-                )}
-                {hero.subtitle && (
-                  <p className="text-white" style={HERO_SUBTITLE_STYLE}>
-                    {hero.subtitle}
-                  </p>
-                )}
-                <Link to="/rooms" className="btn-half site-button button-lg">
-                  <span>Explore Rooms</span><em />
-                </Link>
-              </div>
-            ) : (
-              <HeroText
-                title="Welcome to Sharan Resort & Hotel"
-                subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
-              />
-            )}
-          </HeroSlide>
+    <div style={{ position: 'relative' }} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+      <div ref={ref} className="owl-carousel owl-btn-vertical-center owl-dots-bottom-center">
+        {heroes.map((hero) => (
+          <div key={hero._id} className="item">
+            <HeroSlide imageUrl={hero.image.url} imageAlt={hero.title}>
+              {hero.title || hero.subtitle ? (
+                <div>
+                  {hero.title && (
+                    <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
+                      {hero.title}
+                    </h1>
+                  )}
+                  {hero.subtitle && (
+                    <p className="text-white" style={HERO_SUBTITLE_STYLE}>
+                      {hero.subtitle}
+                    </p>
+                  )}
+                  <Link to="/rooms" className="btn-half site-button button-lg">
+                    <span>Explore Rooms</span><em />
+                  </Link>
+                </div>
+              ) : (
+                <HeroText
+                  title="Welcome to Sharan Resort & Hotel"
+                  subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
+                />
+              )}
+            </HeroSlide>
+          </div>
+        ))}
+      </div>
+
+      {heroes.length > 1 && (
+        <div
+          onClick={() => hoverDir && goTo(hoverDir)}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            [hoverDir === 'prev' ? 'left' : 'right']: edgeOffset,
+            transform: `translateY(-50%) scale(${hoverDir ? 1 : 0.85})`,
+            opacity: hoverDir ? 1 : 0,
+            pointerEvents: hoverDir ? 'auto' : 'none',
+            transition: 'opacity 220ms ease, transform 220ms ease',
+            zIndex: 5,
+            width: 150,
+            cursor: 'pointer',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.45)',
+          }}
+        >
+          {previewHero && (
+            <img
+              src={previewHero.image.url}
+              alt={previewHero.title || ''}
+              style={{ display: 'block', width: '100%', height: 100, objectFit: 'cover' }}
+            />
+          )}
+          <div
+            style={{
+              textAlign: 'center',
+              color: '#fff',
+              background: 'rgba(0,0,0,0.75)',
+              fontSize: 12,
+              letterSpacing: 1,
+              textTransform: 'uppercase',
+              padding: '6px 0',
+              opacity: showLabel ? 1 : 0,
+              transform: showLabel ? 'translateY(0)' : 'translateY(-6px)',
+              transition: 'opacity 200ms ease, transform 200ms ease',
+            }}
+          >
+            Click
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -477,13 +590,22 @@ export default function Home() {
  return (
   <>
     {/* HERO */}
-    <HeroSlider heroes={heroes} />
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <HeroSlider heroes={heroes} />
+    </div>
 
-    {/* BOOKING FORM - overlaps hero with negative margin */}
-    {/* BOOKING FORM - overlaps hero with negative margin */}
-<div style={{ position: 'relative', zIndex: 10, marginTop: '-100px', paddingBottom: '40px' }}>
-  <BookingSearchForm />
-</div>
+    {/* BOOKING FORM - the "booking-bar" class on BookingSearchForm's own
+        root element already carries the theme's -87px overlap margin
+        (see .booking-bar in style.css), so no extra margin is added here.
+        It still needs an explicit stacking context above the hero: Owl
+        Carousel applies a CSS transform to its internal slide track for
+        the slide animation, and transformed elements create their own
+        stacking context - combined with the hero's absolutely-positioned
+        overlay/text layers (z-index 1/2), that was painting on top of
+        this plain static sibling even though it comes later in the DOM. */}
+    <div style={{ position: 'relative', zIndex: 2 }}>
+      <BookingSearchForm />
+    </div>
 
     {/* ABOUT */}
     <div className="section-full p-tb90 bg-white overflow-hide">
