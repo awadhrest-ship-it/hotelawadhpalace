@@ -23,6 +23,10 @@ import settingRoutes from './routes/setting.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import heroRoutes from './routes/hero.routes.js';
+import serviceRoutes from './routes/service.routes.js';
+import partnerRoutes from './routes/partner.routes.js';
+import teamRoutes from './routes/team.routes.js';
+import specializationRoutes from './routes/specialization.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,6 +60,10 @@ export function createApp() {
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/admins', adminRoutes);
   app.use('/api/hero', heroRoutes);
+  app.use('/api/services', serviceRoutes);
+  app.use('/api/partners', partnerRoutes);
+  app.use('/api/team', teamRoutes);
+  app.use('/api/specialization', specializationRoutes);
   
   // Serve the built React app in production
   if (env.nodeEnv === 'production') {

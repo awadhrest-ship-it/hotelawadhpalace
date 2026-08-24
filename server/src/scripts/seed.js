@@ -16,6 +16,10 @@ import Testimonial from '../models/Testimonial.js';
 import BlogPost from '../models/BlogPost.js';
 import GalleryItem from '../models/GalleryItem.js';
 import SiteSetting from '../models/SiteSetting.js';
+import Service from '../models/Service.js';
+import Partner from '../models/Partner.js';
+import TeamMember from '../models/TeamMember.js';
+import Specialization from '../models/Specialization.js';
 
 async function seed() {
   await connectDB();
@@ -250,6 +254,67 @@ async function seed() {
     },
     { upsert: true, new: true }
   );
+
+  // Services ("Our Services" home-page grid)
+  const serviceDefs = [
+    { icon: 'flaticon-wifi', title: 'Free Wi-Fi Available', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 0 },
+    { icon: 'flaticon-room-service', title: 'Meetings & Special Events', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 1 },
+    { icon: 'flaticon-smartphone', title: 'Free Cancellation Anytime', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 2 },
+    { icon: 'flaticon-business-cards', title: 'Best Price Guarantee', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 3 },
+    { icon: 'flaticon-calendar', title: 'Book Now to Secure Availability', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 4 },
+    { icon: 'flaticon-time-passing', title: 'Late Check-out on Request', text: 'Lorem ipsum dolor sit piscing sed diam nonmy.', order: 5 },
+  ];
+  for (const s of serviceDefs) {
+    await Service.findOneAndUpdate({ title: s.title }, s, { upsert: true, new: true });
+  }
+  console.log(`[seed] created ${serviceDefs.length} services`);
+
+  // Partners ("Our Partners" home-page logo grid) with template logos
+  const partnerDefs = ['w1', 'w2', 'w3', 'w4', 'w5', 'w6'].map((file, i) => ({
+    name: `Partner ${i + 1}`,
+    image: { url: `/assets/images/client-logo/${file}.png`, publicId: `local/template/client-logo/${file}`, alt: `Partner ${i + 1}`, order: i },
+    order: i,
+  }));
+  for (const p of partnerDefs) {
+    await Partner.findOneAndUpdate({ name: p.name }, p, { upsert: true, new: true });
+  }
+  console.log(`[seed] created ${partnerDefs.length} partners`);
+
+  // Team ("Our Team" home-page cards) with template photos
+  const teamDefs = [
+    { name: 'Mariya Newman', role: 'Manager', image: { url: '/assets/images/our-team1/pic1.jpg', publicId: 'local/template/our-team1/pic1', alt: 'Mariya Newman', order: 0 }, order: 0 },
+    { name: 'Pamela Smith', role: 'Housekeeping', image: { url: '/assets/images/our-team1/pic2.jpg', publicId: 'local/template/our-team1/pic2', alt: 'Pamela Smith', order: 0 }, order: 1 },
+    { name: 'Michael Evens', role: 'Chief Reception Officer', image: { url: '/assets/images/our-team1/pic3.jpg', publicId: 'local/template/our-team1/pic3', alt: 'Michael Evens', order: 0 }, order: 2 },
+  ];
+  for (const t of teamDefs) {
+    await TeamMember.findOneAndUpdate({ name: t.name }, t, { upsert: true, new: true });
+  }
+  console.log(`[seed] created ${teamDefs.length} team members`);
+
+  // Specialization ("Our Specialization" section) — singleton with template defaults
+  const existingSpecialization = await Specialization.findOne({ key: 'main' });
+  if (!existingSpecialization) {
+    await Specialization.create({
+      key: 'main',
+      heading: 'Discover a hotel that defines a new dimension of luxury.',
+      text:
+        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Mauris fermentum dictum magna. ' +
+        'Sed laoreet aliquam leo. Ut tellus dolor, dapibus eget, elementum vel, cursus eleifend, elit. ' +
+        'Aenean auctor wisi et urna. Aliquam erat volutpat. Duis ac turpis.',
+      counters: [
+        { number: 406, label: 'International Guests', order: 0 },
+        { number: 132, label: 'Five stars rating', order: 1 },
+        { number: 207, label: 'Served Breakfast', order: 2 },
+      ],
+      features: [
+        { icon: 'flaticon-hotel', title: 'Rooms', image: { url: '/assets/images/background/room.jpg', publicId: 'local/template/background/room', order: 0 }, order: 0 },
+        { icon: 'flaticon-coffee-cup', title: 'Restaurant', image: { url: '/assets/images/background/appartment.jpg', publicId: 'local/template/background/appartment', order: 1 }, order: 1 },
+        { icon: 'flaticon-cheers', title: 'Luxury Bars', image: { url: '/assets/images/background/architecture.jpg', publicId: 'local/template/background/architecture', order: 2 }, order: 2 },
+        { icon: 'flaticon-seats-at-the-hall', title: 'Meeting Hall', image: { url: '/assets/images/background/interior.jpg', publicId: 'local/template/background/interior', order: 3 }, order: 3 },
+      ],
+    });
+    console.log('[seed] created specialization section');
+  }
 
   console.log('\n[seed] ✅ Database seeded successfully!');
   console.log(`[seed] Admin login: ${env.seedAdmin.email} / ${env.seedAdmin.password}`);

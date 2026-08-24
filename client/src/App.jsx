@@ -23,6 +23,10 @@ import AdminBlog from './pages/admin/AdminBlog';
 import AdminGallery from './pages/admin/AdminGallery';
 import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminSpecialization from './pages/admin/AdminSpecialization';
+import AdminServices from './pages/admin/AdminServices';
+import AdminPartners from './pages/admin/AdminPartners';
+import AdminTeam from './pages/admin/AdminTeam';
 
 export default function App() {
   return (
@@ -50,6 +54,10 @@ export default function App() {
           <Route path="blog" element={<AdminBlog />} />
           <Route path="gallery" element={<AdminGallery />} />
           <Route path="testimonials" element={<AdminTestimonials />} />
+          <Route path="specialization" element={<AdminSpecialization />} />
+          <Route path="services" element={<AdminServices />} />
+          <Route path="partners" element={<AdminPartners />} />
+          <Route path="team" element={<AdminTeam />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>

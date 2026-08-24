@@ -4,6 +4,7 @@ import api from '../api/client';
 import BookingSearchForm from '../components/BookingSearchForm';
 import RoomCard from '../components/RoomCard';
 import TestimonialsSection from '../components/TestimonialsSection';
+import Counter from '../components/Counter';
 import { useOwlCarousel } from '../hooks/useOwlCarousel';
 
 const ICON_BOXES = [
@@ -175,11 +176,267 @@ function RoomsCarousel({ rooms }) {
   );
 }
 
+function formatBlogDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// "OUR BLOG" — reuses the same BlogPost data/admin panel as the /news page,
+// showing the two most recent posts, same markup as the reference's
+// blog-post latest-blog-1 date-style-2 cards.
+function BlogSection({ posts }) {
+  if (!posts || posts.length === 0) return null;
+  return (
+    <div className="section-full p-t90 p-b60 bg-white">
+      <div className="container">
+        <div className="section-head text-left">
+          <h2 className="m-b5" data-title="Blog">Our Latest Blog</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+        <div className="section-content">
+          <div className="row">
+            {posts.slice(0, 2).map((post) => (
+              <div className="col-lg-6 col-md-6" key={post._id}>
+                <div className="blog-post latest-blog-1 date-style-2">
+                  <div className="wt-post-media wt-img-effect zoom-slow">
+                    <Link to={`/news/${post.slug}`}>
+                      <img src={post.coverImage?.url || '/assets/images/blog/pic1.jpg'} alt={post.title} />
+                    </Link>
+                  </div>
+                  <div className="wt-post-info">
+                    <div className="post-date"><strong>{formatBlogDate(post.publishedAt || post.createdAt)}</strong></div>
+                    <div className="wt-post-meta">
+                      <ul className="clearfix">
+                        <li className="post-author">
+                          <div className="post-author-pic">
+                            <span><strong> By</strong> <Link to={`/news/${post.slug}`}>{post.author}</Link></span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="wt-post-title">
+                      <h3 className="post-title"><Link to={`/news/${post.slug}`}>{post.title}</Link></h3>
+                    </div>
+                    <div className="wt-post-text">
+                      <p>{post.excerpt}</p>
+                    </div>
+                    <div className="readmore-line">
+                      <Link to={`/news/${post.slug}`} className="site-button-ink site-text-primary font-weight-900">Read More</Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "OUR SPECIALIZATION" — full-bleed background image swaps on hover of the
+// four feature tiles, exactly like the reference's bg-changer + hover_tab()
+// jQuery behaviour, reimplemented as local React state (same pattern the
+// app already uses elsewhere instead of loading custom.js globally).
+function SpecializationSection({ data }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  if (!data) return null;
+  const counters = [...data.counters].sort((a, b) => a.order - b.order);
+  const features = [...data.features].sort((a, b) => a.order - b.order);
+
+  return (
+    <div className="section-full bg-change-section overlay-wraper p-tb90" data-toggle="tab-hover">
+      <div className="overlay-main bg-black opacity-06" />
+      <div className="bg-changer">
+        {features.map((f, i) => (
+          <div
+            key={f._id}
+            className={`section-bg${i === activeIndex ? ' active' : ''}`}
+            style={{ backgroundImage: `url(${f.image.url})` }}
+          />
+        ))}
+      </div>
+
+      <div className="container">
+        <div className="section-head text-left">
+          <h2 className="m-b5 text-white" data-title="Specialization">Our Specialization</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-6">
+            <div className="services-part-left">
+              <div className="text-white">
+                <h3 className="m-t0">{data.heading}</h3>
+                <p>{data.text}</p>
+              </div>
+              <div className="section-content">
+                <div className="row">
+                  {counters.map((c) => (
+                    <div className="col-md-4 col-sm-4 col-xs-4 col-xs-100pc" key={c._id}>
+                      <Counter number={c.number} label={c.label} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="row no-col-gap twm-our-speci-box-wrap">
+              {features.map((f, i) => (
+                <div className="col-md-6 col-sm-6 col-xs-6 col-xs-100pc" key={f._id}>
+                  <div
+                    className="wt-icon-box-wraper p-tb20 center bdr-1 bdr-solid bdr-white bgcall-block hover-box-effect"
+                    onMouseEnter={() => setActiveIndex(i)}
+                  >
+                    <div className="icon-md site-text-primary">
+                      <span className="icon-cell text-white"><i className={f.icon} /></span>
+                    </div>
+                    <div className="icon-content text-white">
+                      <h3 className="wt-tilte m-b10">{f.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "OUR SERVICES"
+function ServicesSection({ services }) {
+  if (!services || services.length === 0) return null;
+  return (
+    <div className="section-full p-tb90">
+      <div className="container">
+        <div className="section-head text-left">
+          <h2 className="m-b5" data-title="Services">Our Services</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+        <div className="row">
+          {services.map((s) => (
+            <div className="col-lg-4 col-md-6" key={s._id}>
+              <div className="wt-icon-box-wraper center bdr-1 bdr-gray-light bdr-solid m-b30 p-a20 hover-box-effect v-icon-effect">
+                <div className="icon-md m-b20">
+                  <span className="icon-cell"><i className={`${s.icon} v-icon`} /></span>
+                </div>
+                <div className="icon-content">
+                  <h3 className="wt-tilte">{s.title}</h3>
+                  <p>{s.text}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="text-center">
+          <Link to="/rooms" className="btn-half site-button button-lg m-t50"><span>View All</span><em /></Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "OUR PARTNERS"
+function PartnersSection({ partners }) {
+  if (!partners || partners.length === 0) return null;
+  return (
+    <div className="section-full p-tb90 bg-gray">
+      <div className="container">
+        <div className="section-head text-left">
+          <h2 className="m-b5" data-title="Partners">Our Partners</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+        <div className="section-content">
+          <div className="client-grid grid-4 row">
+            {partners.map((p) => (
+              <div className="col-xs-12 col-sm-4" key={p._id}>
+                {p.link ? (
+                  <a href={p.link} className="wt-img-effect client-logo-media" title={p.name}>
+                    <img src={p.image.url} alt={p.name} />
+                  </a>
+                ) : (
+                  <span className="wt-img-effect client-logo-media">
+                    <img src={p.image.url} alt={p.name} />
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "OUR TEAM"
+function TeamSection({ team }) {
+  if (!team || team.length === 0) return null;
+  return (
+    <div className="section-full p-t90 p-b60 bg-white">
+      <div className="container">
+        <div className="section-head text-left">
+          <h2 className="m-b5" data-title="Team">Our Team</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+        <div className="our-team-two">
+          <div className="row d-flex justify-content-center">
+            {team.map((member) => (
+              <div className="col-lg-4 col-md-6 m-b30" key={member._id}>
+                <div className="wt-team-arc2">
+                  <div className="wt-media">
+                    <img src={member.image.url} alt={member.name} />
+                    <div className="team-social-center">
+                      <ul className="team-social-icon">
+                        {member.socialLinks?.facebook && (
+                          <li><a href={member.socialLinks.facebook} className="fa-brands fa-facebook-f" /></li>
+                        )}
+                        {member.socialLinks?.twitter && (
+                          <li><a href={member.socialLinks.twitter} className="fa-brands fa-x-twitter" /></li>
+                        )}
+                        {member.socialLinks?.instagram && (
+                          <li><a href={member.socialLinks.instagram} className="fa-brands fa-instagram" /></li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="wt-info">
+                    <div className="team-detail text-center">
+                      <h3 className="m-t0">{member.name}</h3>
+                      <p>{member.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [heroes, setHeroes] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [loadingHeroes, setLoadingHeroes] = useState(true);
   const [loadingRooms, setLoadingRooms] = useState(true);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [specialization, setSpecialization] = useState(null);
+  const [services, setServices] = useState([]);
+  const [partners, setPartners] = useState([]);
+  const [team, setTeam] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -200,6 +457,18 @@ export default function Home() {
       .then(({ data }) => active && setRooms(data.data))
       .catch(() => {})
       .finally(() => active && setLoadingRooms(false));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    api.get('/blog').then(({ data }) => active && setBlogPosts(data.data)).catch(() => {});
+    api.get('/specialization').then(({ data }) => active && setSpecialization(data.data)).catch(() => {});
+    api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
+    api.get('/partners').then(({ data }) => active && setPartners(data.data)).catch(() => {});
+    api.get('/team').then(({ data }) => active && setTeam(data.data)).catch(() => {});
     return () => {
       active = false;
     };
@@ -291,7 +560,22 @@ export default function Home() {
       </div>
     </div>
 
+    {/* BLOG */}
+    <BlogSection posts={blogPosts} />
+
+    {/* SPECIALIZATION */}
+    <SpecializationSection data={specialization} />
+
+    {/* SERVICES */}
+    <ServicesSection services={services} />
+
     <TestimonialsSection />
+
+    {/* PARTNERS */}
+    <PartnersSection partners={partners} />
+
+    {/* TEAM */}
+    <TeamSection team={team} />
   </>
 );
 }

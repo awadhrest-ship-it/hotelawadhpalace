@@ -10,6 +10,10 @@ const LINKS = [
   { to: '/admin/blog', label: 'Blog Posts' },
   { to: '/admin/gallery', label: 'Gallery' },
   { to: '/admin/testimonials', label: 'Testimonials' },
+  { to: '/admin/specialization', label: 'Specialization' },
+  { to: '/admin/services', label: 'Services' },
+  { to: '/admin/partners', label: 'Partners' },
+  { to: '/admin/team', label: 'Team' },
   { to: '/admin/settings', label: 'Settings' },
 ];
 
@@ -26,8 +30,21 @@ export default function AdminLayout() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      <aside style={styles.sidebar}>
+    <div style={{ display: 'flex', height: '100vh', fontFamily: 'sans-serif' }}>
+      <style>{`
+        .admin-sidebar-scroll::-webkit-scrollbar { width: 6px; }
+        .admin-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .admin-sidebar-scroll::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 3px; }
+        .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #c9a24b; }
+        .admin-sidebar-scroll { scrollbar-width: thin; scrollbar-color: #4a4a4a transparent; }
+
+        .admin-main-scroll::-webkit-scrollbar { width: 8px; }
+        .admin-main-scroll::-webkit-scrollbar-track { background: transparent; }
+        .admin-main-scroll::-webkit-scrollbar-thumb { background: #d8d2c4; border-radius: 4px; }
+        .admin-main-scroll::-webkit-scrollbar-thumb:hover { background: #c9a24b; }
+        .admin-main-scroll { scrollbar-width: thin; scrollbar-color: #d8d2c4 transparent; }
+      `}</style>
+      <aside style={styles.sidebar} className="admin-sidebar-scroll">
         <div style={styles.brand}>Sharan Admin</div>
         <nav>
           {LINKS.map((link) => (
@@ -51,7 +68,7 @@ export default function AdminLayout() {
           </button>
         </div>
       </aside>
-      <main style={styles.main}>
+      <main style={styles.main} className="admin-main-scroll">
         <Outlet />
       </main>
     </div>
@@ -61,11 +78,16 @@ export default function AdminLayout() {
 const styles = {
   sidebar: {
     width: 220,
+    flexShrink: 0,
+    height: '100vh',
+    position: 'sticky',
+    top: 0,
     background: '#1b1b1b',
     color: '#fff',
     display: 'flex',
     flexDirection: 'column',
     padding: '20px 0',
+    overflowY: 'auto',
   },
   brand: { fontSize: 18, fontWeight: 700, padding: '0 20px 20px' },
   navLink: {
@@ -87,5 +109,5 @@ const styles = {
     cursor: 'pointer',
     fontSize: 13,
   },
-  main: { flex: 1, background: '#f5f5f5', padding: 30, overflowY: 'auto' },
+  main: { flex: 1, height: '100vh', background: '#f5f5f5', padding: 30, overflowY: 'auto', boxSizing: 'border-box' },
 };
