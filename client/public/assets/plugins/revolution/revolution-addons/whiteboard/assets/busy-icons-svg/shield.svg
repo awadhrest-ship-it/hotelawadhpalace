@@ -1,0 +1,192 @@
+                                 </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>      
+                        <!-- USEFUL LINKS -->
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="widget widget_services">
+                                <h4 class="widget-title">Useful links</h4>
+                                <ul>
+                                    <li><a href="about-1.html">About</a></li>
+                                    <li><a href="faq-1.html">FAQ</a></li>
+                                    <li><a href="career.html">Career</a></li>
+                                    <li><a href="our-team.html">Our Team</a></li>
+                                    <li><a href="services.html">Services</a></li>
+                                    <li><a href="gallery-grid-1.html">Gallery</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- NEWSLETTER -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="widget widget_newsletter">
+                                <h4 class="widget-title">Newsletter</h4>
+                                <div class="newsletter-bx">
+                                    <form role="search" method="post">
+                                        <div class="input-group">
+                                        <input name="news-letter" class="form-control" placeholder="ENTER YOUR EMAIL" type="text">
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="site-button"><i class="fa fa-paper-plane-o"></i></button>
+                                        </span>
+                                    </div>
+                                     </form>
+                                </div>
+                            </div>
+                            <!-- SOCIAL LINKS -->
+                            <div class="widget widget_social_inks">
+                                <h4 class="widget-title">Social Links</h4>
+                                <ul class="social-icons social-square social-darkest">
+                                    <li><a href="javascript:void(0);" class="fa fa-facebook"></a></li>
+                                    <li><a href="javascript:void(0);" class="fa fa-twitter"></a></li>
+                                    <li><a href="javascript:void(0);" class="fa fa-linkedin"></a></li>
+                                    <li><a href="javascript:void(0);" class="fa fa-rss"></a></li>
+                                    <li><a href="javascript:void(0);" class="fa fa-youtube"></a></li>
+                                    <li><a href="javascript:void(0);" class="fa fa-instagram"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    
+                       <div class="col-lg-3 col-md-6 col-sm-6 p-tb20">
+                           <div class="wt-icon-box-wraper left  bdr-1 bdr-gray-dark p-tb15 p-lr10 clearfix">
+                                <div class="icon-md site-text-primary">
+                                    <span class="iconmoon-travel"></span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="wt-tilte text-uppercase m-b0">Address</h5>
+                                    <p>No.123 Chalingt Gates, Supper market New York</p>
+                                </div>
+                           </div>
+                        </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6 p-tb20 ">
+                           <div class="wt-icon-box-wraper left  bdr-1 bdr-gray-dark p-tb15 p-lr10 clearfix ">
+                                <div class="icon-md site-text-primary">
+                                    <span class="iconmoon-smartphone-1"></span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="wt-tilte text-uppercase m-b0">Phone</h5>
+                                    <p class="m-b0">+41 555 888 9585</p>
+                                    <p>+41 555 888 9585</p>
+                                </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6 p-tb20">
+                           <div class="wt-icon-box-wraper left  bdr-1 bdr-gray-dark p-tb15 p-lr10 clearfix">
+                                <div class="icon-md site-text-primary">
+                                    <span class="iconmoon-fax"></span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="wt-tilte text-uppercase m-b0">Fax</h5>
+                                    <p class="m-b0">FAX: (123) 123-4567</p>
+                                    <p>FAX: (123) 123-4567</p>
+                                </div>
+                            </div>
+                        </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6 p-tb20">
+                           <div class="wt-icon-box-wraper left  bdr-1 bdr-gray-dark p-tb15 p-lr10 clearfix">
+                                <div class="icon-md site-text-primary">
+                                    <span class="iconmoon-email"></span>
+                                </div>
+                                <div class="icon-content">
+                                    <h5 class="wt-tilte text-uppercase m-b0">Email</h5>
+                                    <p class="m-b0">info@demo.com</p>
+                                    <p>info@demo1234.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FOOTER COPYRIGHT -->
+            <div class="footer-bottom overlay-wraper">
+                <div class="overlay-main"></div>
+                <div class="constrot-strip"></div>
+                <div class="container p-t30">
+                    <div class="row">
+                        <div class="wt-footer-bot-left">
+                            <span class="copyrights-text">© 2023 Your Company. All Rights Reserved. Designed By thewebmax.</span>
+                        </div>
+                        <div class="wt-footer-bot-right">
+                            <ul class="copyrights-nav pull-right"> 
+                                <li><a href="javascript:void(0);">Terms  & Condition</a></li>
+                                <li><a href="javascript:void(0);">Privacy Policy</a></li>
+                                <li><a href="contact-1.html">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- FOOTER END -->
+
+        <!-- BUTTON TOP START -->
+        <button class="scroltop"><span class=" iconmoon-house relative" id="btn-vibrate"></span>Top</button>
+        
+    </div>
+
+    
+
+<!-- LOADING AREA START ===== -->
+<div class="loading-area">
+    <div class="loading-box"></div>
+    <div class="loading-pic">
+        <div class="loader">
+            <span class="block-1"></span>
+            <span class="block-2"></span>
+            <span class="block-3"></span>
+            <span class="block-4"></span>
+            <span class="block-5"></span>
+            <span class="block-6"></span>
+            <span class="block-7"></span>
+            <span class="block-8"></span>
+            <span class="block-9"></span>
+            <span class="block-10"></span>
+            <span class="block-11"></span>
+            <span class="block-12"></span>
+            <span class="block-13"></span>
+            <span class="block-14"></span>
+            <span class="block-15"></span>
+            <span class="block-16"></span>
+        </div>
+    </div>
+</div>
+<!-- LOADING AREA  END ====== -->
+
+ 
+
+<!-- JAVASCRIPT  FILES ========================================= --> 
+<script   src="js/jquery-3.6.1.min.js"></script><!-- JQUERY.MIN JS -->
+<script   src="js/popper.min.js"></script><!-- POPPER.MIN JS -->
+<script   src="js/bootstrap.min.js"></script><!-- BOOTSTRAP.MIN JS -->
+<script   src="js/bootstrap-select.min.js"></script><!-- FORM JS -->
+<script   src="js/jquery.bootstrap-touchspin.min.js"></script><!-- FORM JS -->
+<script   src="js/magnific-popup.min.js"></script><!-- MAGNIFIC-POPUP JS -->
+<script   src="js/waypoints.min.js"></script><!-- WAYPOINTS JS -->
+<script   src="js/counterup.min.js"></script><!-- COUNTERUP JS -->
+<script   src="js/waypoints-sticky.min.js"></script><!-- COUNTERUP JS -->
+<script   src="js/isotope.pkgd.min.js"></script><!-- MASONRY  -->
+<script   src="js/imagesloaded.pkgd.min.js"></script><!-- MASONRY  -->
+<script   src="js/owl.carousel.min.js"></script><!-- OWL  SLIDER  -->
+<script   src="js/scrolla.min.js"></script><!-- ON SCROLL CONTENT ANIMTE   --> 
+<script   src="js/custom.js"></script><!-- CUSTOM FUCTIONS  -->
+<script   src="js/shortcode.js"></script><!-- SHORTCODE FUCTIONS  -->
+
+
+<!-- SLIDER REVOLUTION -->
+<script  src="plugins/revolution/revolution/js/jquery.themepunch.tools.min.js"></script>
+<script  src="plugins/revolution/revolution/js/jquery.themepunch.revolution.min.js"></script>
+<script  src="plugins/revolution/revolution/js/extensions/revolution-plugin.js"></script>
+<!-- REVOLUTION SLIDER SCRIPT -->
+
+<!-- REVOLUTION SLIDER SCRIPT FILES -->
+<script  src="js/rev-script-1.js"></script>
+
+</body>
+
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

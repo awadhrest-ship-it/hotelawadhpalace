@@ -1,0 +1,143 @@
+llModules = /* @__PURE__ */ new Set();
+	collectAllModules(bundleChunks, entryChunk.fileName, allModules);
+	return {
+		code: entryChunk.code,
+		dependencies: [...allModules].filter((m) => !m.startsWith("\0"))
+	};
+}
+function collectAllModules(bundle, fileName, allModules, analyzedModules = /* @__PURE__ */ new Set()) {
+	if (analyzedModules.has(fileName)) return;
+	analyzedModules.add(fileName);
+	const chunk = bundle[fileName];
+	for (const mod of chunk.moduleIds) allModules.add(mod);
+	for (const i of chunk.imports) {
+		analyzedModules.add(i);
+		collectAllModules(bundle, i, allModules, analyzedModules);
+	}
+	for (const i of chunk.dynamicImports) {
+		analyzedModules.add(i);
+		collectAllModules(bundle, i, allModules, analyzedModules);
+	}
+}
+const _require = createRequire(
+	/** #__KEEP__ */
+	import.meta.url
+);
+async function loadConfigFromBundledFile(fileName, bundledCode, isESM) {
+	if (isESM) {
+		let nodeModulesDir = typeof process.versions.deno === "string" ? void 0 : findNearestNodeModules(path.dirname(fileName));
+		if (nodeModulesDir) try {
+			await fsp.mkdir(path.resolve(nodeModulesDir, ".vite-temp/"), { recursive: true });
+		} catch (e) {
+			if (e.code === "EACCES") nodeModulesDir = void 0;
+			else throw e;
+		}
+		const hash = `timestamp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+		const tempFileName = nodeModulesDir ? path.resolve(nodeModulesDir, `.vite-temp/${path.basename(fileName)}.${hash}.mjs`) : `${fileName}.${hash}.mjs`;
+		await fsp.writeFile(tempFileName, bundledCode);
+		try {
+			return (await import(pathToFileURL(tempFileName).href)).default;
+		} finally {
+			fs.unlink(tempFileName, () => {});
+		}
+	} else {
+		const extension = path.extname(fileName);
+		const realFileName = await promisifiedRealpath(fileName);
+		const loaderExt = extension in _require.extensions ? extension : ".js";
+		const defaultLoader = _require.extensions[loaderExt];
+		_require.extensions[loaderExt] = (module, filename) => {
+			if (filename === realFileName) module._compile(bundledCode, filename);
+			else defaultLoader(module, filename);
+		};
+		delete _require.cache[_require.resolve(fileName)];
+		const raw = _require(fileName);
+		_require.extensions[loaderExt] = defaultLoader;
+		return raw.__esModule ? raw.default : raw;
+	}
+}
+async function runConfigHook(config, plugins, configEnv) {
+	let conf = config;
+	const context = new BasicMinimalPluginContext(basePluginContextMeta, createLogger(config.logLevel, {
+		allowClearScreen: config.clearScreen,
+		customLogger: config.customLogger
+	}));
+	for (const p of getSortedPluginsByHook("config", plugins)) {
+		const hook = p.config;
+		const res = await getHookHandler(hook).call(context, conf, configEnv);
+		if (res && res !== conf) {
+			if (hasBothRollupOptionsAndRolldownOptions(res)) context.warn(`Both \`rollupOptions\` and \`rolldownOptions\` were specified by ${JSON.stringify(p.name)} plugin. \`rollupOptions\` specified by that plugin will be ignored.`);
+			if (res.esbuild) context.warn(`\`esbuild\` option was specified by ${JSON.stringify(p.name)} plugin. This option is deprecated, please use \`oxc\` instead.`);
+			if (res.optimizeDeps?.esbuildOptions) context.warn(`\`optimizeDeps.esbuildOptions\` option was specified by ${JSON.stringify(p.name)} plugin. This option is deprecated, please use \`optimizeDeps.rolldownOptions\` instead.`);
+			conf = mergeConfig(conf, res);
+		}
+	}
+	return conf;
+}
+async function runConfigEnvironmentHook(environments, plugins, logger, configEnv, isSsrTargetWebworkerSet) {
+	const context = new BasicMinimalPluginContext(basePluginContextMeta, logger);
+	const environmentNames = Object.keys(environments);
+	for (const p of getSortedPluginsByHook("configEnvironment", plugins)) {
+		const hook = p.configEnvironment;
+		const handler = getHookHandler(hook);
+		for (const name of environmentNames) {
+			const res = await handler.call(context, name, environments[name], {
+				...configEnv,
+				isSsrTargetWebworker: isSsrTargetWebworkerSet && name === "ssr"
+			});
+			if (res) environments[name] = mergeConfig(environments[name], res);
+		}
+	}
+}
+function optimizeDepsDisabledBackwardCompatibility(resolved, optimizeDeps, optimizeDepsPath = "") {
+	const optimizeDepsDisabled = optimizeDeps.disabled;
+	if (optimizeDepsDisabled !== void 0) {
+		if (optimizeDepsDisabled === true || optimizeDepsDisabled === "dev") {
+			const commonjsOptionsInclude = resolved.build.commonjsOptions.include;
+			const commonjsPluginDisabled = Array.isArray(commonjsOptionsInclude) && commonjsOptionsInclude.length === 0;
+			optimizeDeps.noDiscovery = true;
+			optimizeDeps.include = void 0;
+			if (commonjsPluginDisabled) resolved.build.commonjsOptions.include = void 0;
+			resolved.logger.warn(import_picocolors.default.yellow(`(!) Experimental ${optimizeDepsPath}optimizeDeps.disabled and deps pre-bundling during build were removed in Vite 5.1.
+    To disable the deps optimizer, set ${optimizeDepsPath}optimizeDeps.noDiscovery to true and ${optimizeDepsPath}optimizeDeps.include as undefined or empty.
+    Please remove ${optimizeDepsPath}optimizeDeps.disabled from your config.
+    ${commonjsPluginDisabled ? "Empty config.build.commonjsOptions.include will be ignored to support CJS during build. This config should also be removed." : ""}
+  `));
+		} else if (optimizeDepsDisabled === false || optimizeDepsDisabled === "build") resolved.logger.warn(import_picocolors.default.yellow(`(!) Experimental ${optimizeDepsPath}optimizeDeps.disabled and deps pre-bundling during build were removed in Vite 5.1.
+    Setting it to ${optimizeDepsDisabled} now has no effect.
+    Please remove ${optimizeDepsPath}optimizeDeps.disabled from your config.
+  `));
+	}
+}
+//#endregion
+//#region src/node/server/environments/fetchableEnvironments.ts
+function createFetchableDevEnvironment(name, config, context) {
+	if (typeof Request === "undefined" || typeof Response === "undefined") throw new TypeError("FetchableDevEnvironment requires a global `Request` and `Response` object.");
+	if (!context.handleRequest) throw new TypeError("FetchableDevEnvironment requires a `handleRequest` method during initialisation.");
+	return new FetchableDevEnvironment(name, config, context);
+}
+function isFetchableDevEnvironment(environment) {
+	return environment instanceof FetchableDevEnvironment;
+}
+var FetchableDevEnvironment = class extends DevEnvironment {
+	_handleRequest;
+	constructor(name, config, context) {
+		super(name, config, context);
+		this._handleRequest = context.handleRequest;
+	}
+	async dispatchFetch(request) {
+		if (!(request instanceof Request)) throw new TypeError("FetchableDevEnvironment `dispatchFetch` must receive a `Request` object.");
+		const response = await this._handleRequest(request);
+		if (!(response instanceof Response)) throw new TypeError("FetchableDevEnvironment `context.handleRequest` must return a `Response` object.");
+		return response;
+	}
+};
+//#endregion
+//#region src/node/index.ts
+/** @deprecated - use `parse` instead */
+const parseAst$1 = parseAst;
+/** @deprecated - use `parseAsync` instead */
+const parseAstAsync$1 = parseAstAsync;
+const esbuildVersion = "0.25.0";
+//#endregion
+export { depsFromOptimizedDepInfo as $, builderOptionsDefaults as A, searchForWorkspaceRoot as At, resolveBuilderOptions as B, transformWithEsbuild as Bt, resolvePreviewOptions as C, send as Ct, ChunkMetadataMap as D, fetchModule as Dt, BuildEnvironment as E, isFileServingAllowed as Et, injectEnvironmentToHooks as F, createServerModuleRunnerTransport as Ft, toOutputFilePathInHtml as G, mergeConfig as Gt, resolveRolldownOptions as H, createFilter$1 as Ht, onRollupLog as I, buildErrorMessage as It, addManuallyIncludedOptimizeDeps as J, rollupVersion as Jt, toOutputFilePathInJS as K, normalizePath as Kt, resolveBuildEnvironmentOptions as L, loadEnv as Lt, createBuilder as M, perEnvironmentState as Mt, createToImportMetaURLBasedRelativeRuntime as N, ssrTransform as Nt, build as O, formatPostcssSourceMap as Ot, enhanceRollupError as P, createServerModuleRunner as Pt, createIsOptimizedDepUrl as Q, resolveBuildOutputs as R, resolveEnvPrefix as Rt, preview as S, serverConfigDefaults as St, isRunnableDevEnvironment as T, isFileLoadingAllowed as Tt, resolveUserExternal as U, isCSSRequest as Ut, resolveLibFilename as V, perEnvironmentPlugin as Vt, toOutputFilePathInCss as W, mergeAlias as Wt, cleanupDepsCacheStaleDirs as X, addOptimizedDepInfo as Y, withFilter as Yt, createIsOptimizedDepFile as Z, resolveConfig as _, createServer$2 as _t, minifySync as a, initDepsOptimizerMetadata as at, sortUserPlugins as b, resolveServerOptions as bt, parseAstAsync$1 as c, optimizeDeps as ct, isFetchableDevEnvironment as d, optimizedDepInfoFromId as dt, depsLogString as et, defineConfig as f, optimizedDepNeedsInterop as ft, resolveBaseUrl as g, _createServer as gt, loadConfigFromFile as h, createServerHotChannel as ht, minify as i, getOptimizedDepPath as it, clearLine as j, createIdResolver as jt, buildEnvironmentOptionsDefaults as k, preprocessCSS as kt, parseSync as l, optimizeExplicitEnvironmentDeps as lt, isResolvedConfig as m, toDiscoveredDependencies as mt, esbuildVersion as n, extractExportsData as nt, parse as o, isDepOptimizationDisabled as ot, getDefaultEnvironmentOptions as p, runOptimizeDeps as pt, toOutputFilePathWithoutRuntime as q, rolldownVersion as qt, esmExternalRequirePlugin as r, getDepsCacheDir as rt, parseAst$1 as s, loadCachedDepOptimizationMetadata as st, Visitor as t, discoverProjectDependencies as tt, createFetchableDevEnvironment as u, optimizedDepInfoFromFile as ut, resolveDevEnvironmentOptions as v, createServerCloseFn as vt, createRunnableDevEnvironment as w, DevEnvironment as wt, runnerImport as x, restartServerWithUrls as xt, resolveDevToolsConfig as y, resolveForwardConsoleOptions as yt, resolveBuildPlugins as z, transformWithOxc as zt };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
