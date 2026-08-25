@@ -5,7 +5,7 @@ const galleryCategorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String, default: '' },
-    coverImage: { type: imageSchema, required: true },
+    coverImage: { type: imageSchema, required: false, default: null },
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
   },

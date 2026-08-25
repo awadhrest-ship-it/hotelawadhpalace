@@ -15,11 +15,14 @@ router.get('/', asyncHandler(async (req, res) => {
 }));
 
 router.post('/', requireAuth, upload.single('image'), asyncHandler(async (req, res) => {
+  if (!req.body.category) {
+    return res.status(400).json({ success: false, message: 'Please select a category for this image' });
+  }
   assertValidImage(req.file);
   const { secure_url: url, public_id: publicId } = await uploadBufferToCloudinary(req.file.buffer, 'gallery');
   const item = await GalleryItem.create({
     title: req.body.title || '',
-    category: req.body.category || 'general',
+    category: req.body.category,
     image: { url, publicId, alt: req.body.title || '', order: 0 },
   });
   res.status(201).json({ success: true, data: item });

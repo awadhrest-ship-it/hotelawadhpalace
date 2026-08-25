@@ -499,7 +499,7 @@ export default function Home() {
     api.get('/blog').then(({ data }) => active && setBlogPosts(data.data)).catch(() => {});
     api.get('/specialization').then(({ data }) => active && setSpecialization(data.data)).catch(() => {});
     api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
-    api.get('/gallery-categories?featured=true').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
+    api.get('/gallery-categories/featured').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
     return () => {
       active = false;
     };
