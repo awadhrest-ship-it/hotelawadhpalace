@@ -8,12 +8,11 @@ const LINKS = [
   { to: '/admin/bookings', label: 'Bookings' },
   { to: '/admin/enquiries', label: 'Enquiries' },
   { to: '/admin/blog', label: 'Blog Posts' },
-  { to: '/admin/gallery', label: 'Gallery' },
+  { to: '/admin/gallery', label: 'Gallery Images' },
+  { to: '/admin/gallery-categories', label: 'Gallery Categories' },
   { to: '/admin/testimonials', label: 'Testimonials' },
   { to: '/admin/specialization', label: 'Specialization' },
   { to: '/admin/services', label: 'Services' },
-  { to: '/admin/partners', label: 'Partners' },
-  { to: '/admin/team', label: 'Team' },
   { to: '/admin/settings', label: 'Settings' },
 ];
 

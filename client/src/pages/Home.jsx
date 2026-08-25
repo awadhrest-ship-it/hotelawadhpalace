@@ -4,6 +4,7 @@ import api from '../api/client';
 import BookingSearchForm from '../components/BookingSearchForm';
 import RoomCard from '../components/RoomCard';
 import TestimonialsSection from '../components/TestimonialsSection';
+import GalleryCategorySection from '../components/GalleryCategorySection';
 import Counter from '../components/Counter';
 import { useOwlCarousel } from '../hooks/useOwlCarousel';
 
@@ -457,88 +458,7 @@ function ServicesSection({ services }) {
   );
 }
 
-// "OUR PARTNERS"
-function PartnersSection({ partners }) {
-  if (!partners || partners.length === 0) return null;
-  return (
-    <div className="section-full p-tb90 bg-gray">
-      <div className="container">
-        <div className="section-head text-left">
-          <h2 className="m-b5" data-title="Partners">Our Partners</h2>
-          <div className="wt-separator-outer">
-            <div className="wt-separator site-bg-primary" />
-          </div>
-        </div>
-        <div className="section-content">
-          <div className="client-grid grid-4 row">
-            {partners.map((p) => (
-              <div className="col-xs-12 col-sm-4" key={p._id}>
-                {p.link ? (
-                  <a href={p.link} className="wt-img-effect client-logo-media" title={p.name}>
-                    <img src={p.image.url} alt={p.name} />
-                  </a>
-                ) : (
-                  <span className="wt-img-effect client-logo-media">
-                    <img src={p.image.url} alt={p.name} />
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-// "OUR TEAM"
-function TeamSection({ team }) {
-  if (!team || team.length === 0) return null;
-  return (
-    <div className="section-full p-t90 p-b60 bg-white">
-      <div className="container">
-        <div className="section-head text-left">
-          <h2 className="m-b5" data-title="Team">Our Team</h2>
-          <div className="wt-separator-outer">
-            <div className="wt-separator site-bg-primary" />
-          </div>
-        </div>
-        <div className="our-team-two">
-          <div className="row d-flex justify-content-center">
-            {team.map((member) => (
-              <div className="col-lg-4 col-md-6 m-b30" key={member._id}>
-                <div className="wt-team-arc2">
-                  <div className="wt-media">
-                    <img src={member.image.url} alt={member.name} />
-                    <div className="team-social-center">
-                      <ul className="team-social-icon">
-                        {member.socialLinks?.facebook && (
-                          <li><a href={member.socialLinks.facebook} className="fa-brands fa-facebook-f" /></li>
-                        )}
-                        {member.socialLinks?.twitter && (
-                          <li><a href={member.socialLinks.twitter} className="fa-brands fa-x-twitter" /></li>
-                        )}
-                        {member.socialLinks?.instagram && (
-                          <li><a href={member.socialLinks.instagram} className="fa-brands fa-instagram" /></li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="wt-info">
-                    <div className="team-detail text-center">
-                      <h3 className="m-t0">{member.name}</h3>
-                      <p>{member.role}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Home() {
   const [heroes, setHeroes] = useState([]);
@@ -548,8 +468,7 @@ export default function Home() {
   const [blogPosts, setBlogPosts] = useState([]);
   const [specialization, setSpecialization] = useState(null);
   const [services, setServices] = useState([]);
-  const [partners, setPartners] = useState([]);
-  const [team, setTeam] = useState([]);
+  const [galleryCategories, setGalleryCategories] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -580,8 +499,7 @@ export default function Home() {
     api.get('/blog').then(({ data }) => active && setBlogPosts(data.data)).catch(() => {});
     api.get('/specialization').then(({ data }) => active && setSpecialization(data.data)).catch(() => {});
     api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
-    api.get('/partners').then(({ data }) => active && setPartners(data.data)).catch(() => {});
-    api.get('/team').then(({ data }) => active && setTeam(data.data)).catch(() => {});
+    api.get('/gallery-categories?featured=true').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
     return () => {
       active = false;
     };
@@ -693,11 +611,8 @@ export default function Home() {
 
     <TestimonialsSection />
 
-    {/* PARTNERS */}
-    <PartnersSection partners={partners} />
-
-    {/* TEAM */}
-    <TeamSection team={team} />
+    {/* GALLERY CATEGORIES */}
+    <GalleryCategorySection categories={galleryCategories} />
   </>
 );
 }

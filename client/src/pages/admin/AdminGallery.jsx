@@ -3,10 +3,23 @@ import api from '../../api/client';
 
 export default function AdminGallery() {
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('general');
+  const [category, setCategory] = useState('');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+
+  const loadCategories = async () => {
+    try {
+      const { data } = await api.get('/gallery-categories');
+      setCategories(data.data);
+      if (data.data.length > 0 && !category) {
+        setCategory(data.data[0]._id);
+      }
+    } catch (err) {
+      setError('Failed to load categories');
+    }
+  };
 
   const load = async () => {
     const { data } = await api.get('/gallery');
@@ -14,10 +27,16 @@ export default function AdminGallery() {
   };
 
   useEffect(() => {
+    loadCategories();
     load().catch((err) => setError(err.message));
   }, []);
 
   const upload = async (file) => {
+    if (!category) {
+      setError('Please select a category');
+      return;
+    }
+
     setUploading(true);
     setError('');
     try {
@@ -47,7 +66,7 @@ export default function AdminGallery() {
 
   return (
     <div>
-      <h1>Gallery</h1>
+      <h1>Gallery Images</h1>
       {error && <p style={{ color: '#c0392b' }}>{error}</p>}
 
       <div style={card}>
@@ -58,12 +77,18 @@ export default function AdminGallery() {
           onChange={(e) => setTitle(e.target.value)}
           style={{ ...input, marginBottom: 8 }}
         />
-        <input
-          placeholder="Category"
+        <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           style={{ ...input, marginBottom: 8 }}
-        />
+        >
+          <option value="">Select Category</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
         <label style={{ ...btnPrimary, display: 'inline-block', cursor: 'pointer' }}>
           {uploading ? 'Uploading...' : 'Choose image'}
           <input
@@ -80,7 +105,10 @@ export default function AdminGallery() {
           <div key={item._id} style={{ background: '#fff', borderRadius: 6, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
             <img src={item.image.url} alt={item.title} style={{ width: '100%', display: 'block' }} />
             <div style={{ padding: 8 }}>
-              <div style={{ fontSize: 12, color: '#777' }}>{item.title || item.category}</div>
+              <div style={{ fontSize: 12, color: '#777' }}>
+                {item.title || 'Untitled'}
+                {item.category && <div style={{ fontSize: 10, color: '#999' }}>Category: {item.category}</div>}
+              </div>
               <button type="button" onClick={() => remove(item._id)} style={{ ...btnDanger, marginTop: 6, width: '100%' }}>
                 Delete
               </button>

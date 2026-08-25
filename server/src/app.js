@@ -19,6 +19,7 @@ import contactRoutes from './routes/contact.routes.js';
 import newsletterRoutes from './routes/newsletter.routes.js';
 import blogRoutes from './routes/blog.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
+import galleryCategoryRoutes from './routes/gallery-categories.routes.js';
 import testimonialRoutes from './routes/testimonial.routes.js';
 import settingRoutes from './routes/setting.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
@@ -92,6 +93,7 @@ export function createApp() {
   app.use('/api/newsletter', newsletterRoutes);
   app.use('/api/blog', blogRoutes);
   app.use('/api/gallery', galleryRoutes);
+  app.use('/api/gallery-categories', galleryCategoryRoutes);
   app.use('/api/testimonials', testimonialRoutes);
   app.use('/api/settings', settingRoutes);
   app.use('/api/dashboard', dashboardRoutes);

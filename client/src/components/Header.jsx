@@ -5,27 +5,26 @@ const NAV = [
   {
     label: 'Home',
     to: '/',
-    children: [{ label: 'Home', to: '/' }],
   },
   {
     label: 'Rooms',
     to: '/rooms',
-    children: [{ label: 'All Rooms', to: '/rooms' }],
   },
   {
-    label: 'Pages',
-    to: '/about',
-    children: [
-      { label: 'About us', to: '/about' },
-      { label: 'Blog', to: '/news' },
-      { label: 'Gallery', to: '/gallery' },
-      { label: 'Contact us', to: '/contact' },
-    ],
+    label: 'Gallery',
+    to: '/gallery',
+  },
+  {
+    label: 'Blog',
+    to: '/news',
   },
   {
     label: 'Contact',
     to: '/contact',
-    children: [{ label: 'Contact us', to: '/contact' }],
+    children: [
+      { label: 'About us', to: '/about' },
+      { label: 'Contact us', to: '/contact' },
+    ],
   },
 ];
 
@@ -102,30 +101,40 @@ export default function Header() {
                 {NAV.map((item) => (
                   <li
                     key={item.label}
-                    className={`has-child${openSubmenu === item.label ? ' nav-active' : ''}`}
+                    className={
+                      item.children
+                        ? `has-child${openSubmenu === item.label ? ' nav-active' : ''}`
+                        : undefined
+                    }
                   >
                     <NavLink to={item.to} end={item.to === '/'} onClick={() => setDrawerOpen(false)}>
                       {item.label}
                     </NavLink>
-                    <div
-                      className="fa fa-angle-right submenu-toogle"
-                      onClick={() => toggleSubmenu(item.label)}
-                    />
-                    <ul
-                      className="sub-menu"
-                      style={{
-                        display:
-                          openSubmenu === item.label || window.innerWidth > 991 ? undefined : 'none',
-                      }}
-                    >
-                      {item.children.map((child) => (
-                        <li key={child.label}>
-                          <NavLink to={child.to} onClick={() => setDrawerOpen(false)}>
-                            {child.label}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
+                    {item.children && (
+                      <>
+                        <div
+                          className="fa fa-angle-right submenu-toogle"
+                          onClick={() => toggleSubmenu(item.label)}
+                        />
+                        <ul
+                          className="sub-menu"
+                          style={{
+                            display:
+                              openSubmenu === item.label || window.innerWidth > 991
+                                ? undefined
+                                : 'none',
+                          }}
+                        >
+                          {item.children.map((child) => (
+                            <li key={child.label}>
+                              <NavLink to={child.to} onClick={() => setDrawerOpen(false)}>
+                                {child.label}
+                              </NavLink>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>
