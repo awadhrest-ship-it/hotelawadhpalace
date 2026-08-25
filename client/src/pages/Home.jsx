@@ -17,20 +17,6 @@ const ICON_BOXES = [
 
 const ABOUT_SLIDES = [1, 2, 3, 4, 5];
 
-// Shared hero sizing/position — kept in one place so every hero (with or
-// without CMS data) renders at the exact same size and position.
-//
-// The hero photo is a real <img> in normal flow (height:auto), not a CSS
-// background — a CSS background always has to be cropped ('cover') or
-// letterboxed ('contain') to fill a fixed box. Using an <img> means the
-// box's height simply becomes whatever the image's own aspect ratio
-// needs, so the entire uploaded photo is always visible, nothing is
-// ever cropped top or bottom, and the text overlay (positioned
-// absolutely, vertically centered via the theme's `.wt-bnr-inr-entry`
-// table-cell trick — same mechanism PageBanner.jsx already uses) simply
-// sizes itself to match.
-const HERO_MIN_HEIGHT = 420;
-
 const HERO_TITLE_STYLE = {
   maxWidth: 700,
   fontSize: 'clamp(30px, 4.4vw, 56px)',
@@ -65,10 +51,19 @@ function HeroText({ title, subtitle }) {
 function HeroSlide({ imageUrl, imageAlt, children }) {
   return (
     <div className="wt-bnr-inr overlay-wraper" style={{ position: 'relative' }}>
+      {/* The `.wt-bnr-inr` class (theme CSS) already gives this box a fixed,
+          responsive height (500px desktop / 330px on small screens). The
+          image is absolutely positioned to fill that fixed box via
+          object-fit:cover, so every slide renders at the exact same height
+          regardless of the source photo's own aspect ratio. Previously the
+          image sat in normal flow with height:auto, so each photo's own
+          aspect ratio stretched the box to a different height per slide —
+          that's what was shoving the "Book A Room" bar (and everything
+          below it) up/down as the carousel slid between images. */}
       <img
         src={imageUrl}
         alt={imageAlt || ''}
-        style={{ display: 'block', width: '100%', height: 'auto', minHeight: HERO_MIN_HEIGHT, objectFit: 'cover' }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
       />
       <div className="overlay-main bg-black opacity-05" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
       <div className="container" style={{ position: 'absolute', top: 0, left: '50%', right: 'auto', bottom: 0, transform: 'translateX(-50%)', zIndex: 2, width: '100%' }}>
