@@ -5,6 +5,7 @@ const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/hero', label: 'Hero Images' },
   { to: '/admin/rooms', label: 'Rooms' },
+  { to: '/admin/facilities', label: 'Rooms & Suites Tabs' },
   { to: '/admin/bookings', label: 'Bookings' },
   { to: '/admin/enquiries', label: 'Enquiries' },
   { to: '/admin/blog', label: 'Blog Posts' },

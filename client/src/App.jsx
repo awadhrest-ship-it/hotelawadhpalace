@@ -26,6 +26,7 @@ import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminSpecialization from './pages/admin/AdminSpecialization';
 import AdminServices from './pages/admin/AdminServices';
+import AdminFacilities from './pages/admin/AdminFacilities';
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="hero" element={<AdminHero />} />
           <Route path="rooms" element={<AdminRooms />} />
+          <Route path="facilities" element={<AdminFacilities />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="enquiries" element={<AdminEnquiries />} />
           <Route path="blog" element={<AdminBlog />} />

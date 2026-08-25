@@ -460,6 +460,112 @@ function ServicesSection({ services }) {
 
 
 
+// "OUR ROOMS & SUITES" section, now a tabbed view: a "Rooms" tab (backed by
+// the existing Room data, unchanged carousel behaviour) plus one tab per
+// Facility document (Restaurant, Bar, Rooftop, Garden, Dome, ...). Facility
+// tabs, their order, and everything shown in them are fully editable from
+// the admin panel (Admin > Rooms & Facilities) — nothing here is hardcoded
+// beyond the "Rooms" tab's wiring to the room carousel.
+function RoomsFacilitiesSection({ rooms, loadingRooms, facilities }) {
+  const [activeKey, setActiveKey] = useState('rooms');
+
+  const tabs = [
+    { key: 'rooms', label: 'Rooms' },
+    ...facilities.map((f) => ({ key: f.key, label: f.tabLabel })),
+  ];
+
+  const activeFacility = facilities.find((f) => f.key === activeKey) || null;
+
+  return (
+    <div className="section-full p-tb90 bg-gray">
+      <div className="container">
+        <div className="section-head text-center">
+          <h2 className="m-b5" data-title="Suites">Our Rooms &amp; Suites</h2>
+          <div className="wt-separator-outer">
+            <div className="wt-separator site-bg-primary" />
+          </div>
+        </div>
+
+        <ul
+          style={{
+            listStyle: 'none',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 14,
+            margin: '0 0 40px',
+            padding: 0,
+          }}
+        >
+          {tabs.map((tab, idx) => (
+            <li key={tab.key} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              {idx > 0 && <span style={{ color: '#c7c2b8' }}>/</span>}
+              <button
+                type="button"
+                onClick={() => setActiveKey(tab.key)}
+                className={activeKey === tab.key ? 'site-text-primary' : ''}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                  color: activeKey === tab.key ? undefined : '#1b1b1b',
+                }}
+              >
+                {tab.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {activeKey === 'rooms' ? (
+        <div className="container-fluid">
+          <div className="section-content">
+            {loadingRooms ? (
+              <p className="text-center">Loading rooms&hellip;</p>
+            ) : rooms.length === 0 ? (
+              <p className="text-center">Rooms will appear here shortly.</p>
+            ) : (
+              <RoomsCarousel rooms={rooms} />
+            )}
+          </div>
+        </div>
+      ) : (
+        activeFacility && (
+          <div className="container">
+            <div className="row d-flex align-items-center">
+              <div className="col-lg-6 col-md-12 m-b30">
+                <div className="wt-img-effect zoom-slow">
+                  <img
+                    src={activeFacility.image?.url || '/assets/images/background/room.jpg'}
+                    alt={activeFacility.name}
+                    style={{ width: '100%', height: 420, objectFit: 'cover', display: 'block', borderRadius: 4 }}
+                  />
+                </div>
+              </div>
+              <div className="col-lg-6 col-md-12 m-b30">
+                {activeFacility.tagline && (
+                  <h4 className="site-text-primary font-weight-700 m-b10" style={{ textTransform: 'uppercase', fontSize: 14, letterSpacing: '1px' }}>
+                    {activeFacility.tagline}
+                  </h4>
+                )}
+                <h3 className="m-b20">{activeFacility.name}</h3>
+                <p>{activeFacility.description}</p>
+              </div>
+            </div>
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [heroes, setHeroes] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -469,6 +575,7 @@ export default function Home() {
   const [specialization, setSpecialization] = useState(null);
   const [services, setServices] = useState([]);
   const [galleryCategories, setGalleryCategories] = useState([]);
+  const [facilities, setFacilities] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -500,6 +607,7 @@ export default function Home() {
     api.get('/specialization').then(({ data }) => active && setSpecialization(data.data)).catch(() => {});
     api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
     api.get('/gallery-categories/featured').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
+    api.get('/facilities').then(({ data }) => active && setFacilities(data.data)).catch(() => {});
     return () => {
       active = false;
     };
@@ -577,28 +685,8 @@ export default function Home() {
       </div>
     </div>
 
-    {/* ROOMS */}
-    <div className="section-full p-tb90 bg-gray">
-      <div className="container">
-        <div className="section-head text-center">
-          <h2 className="m-b5" data-title="Suites">Our Rooms &amp; Suites</h2>
-          <div className="wt-separator-outer">
-            <div className="wt-separator site-bg-primary" />
-          </div>
-        </div>
-      </div>
-      <div className="container-fluid">
-        <div className="section-content">
-          {loadingRooms ? (
-            <p className="text-center">Loading rooms&hellip;</p>
-          ) : rooms.length === 0 ? (
-            <p className="text-center">Rooms will appear here shortly.</p>
-          ) : (
-            <RoomsCarousel rooms={rooms} />
-          )}
-        </div>
-      </div>
-    </div>
+    {/* ROOMS & FACILITIES */}
+    <RoomsFacilitiesSection rooms={rooms} loadingRooms={loadingRooms} facilities={facilities} />
 
     {/* BLOG */}
     <BlogSection posts={blogPosts} />

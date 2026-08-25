@@ -29,6 +29,7 @@ import serviceRoutes from './routes/service.routes.js';
 import partnerRoutes from './routes/partner.routes.js';
 import teamRoutes from './routes/team.routes.js';
 import specializationRoutes from './routes/specialization.routes.js';
+import facilityRoutes from './routes/facility.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -103,6 +104,7 @@ export function createApp() {
   app.use('/api/partners', partnerRoutes);
   app.use('/api/team', teamRoutes);
   app.use('/api/specialization', specializationRoutes);
+  app.use('/api/facilities', facilityRoutes);
   
   // Serve the built React app in production — only when it's actually
   // present in this deployment (e.g. a single combined deploy). When the
