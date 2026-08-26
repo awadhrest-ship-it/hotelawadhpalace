@@ -54,20 +54,31 @@ function HeroText({ title, subtitle }) {
 
 function HeroSlide({ imageUrl, imageAlt, children }) {
   return (
-    <div className="wt-bnr-inr overlay-wraper" style={{ position: 'relative' }}>
-      {/* The `.wt-bnr-inr` class (theme CSS) already gives this box a fixed,
-          responsive height (500px desktop / 330px on small screens). The
-          image is absolutely positioned to fill that fixed box via
-          object-fit:cover, so every slide renders at the exact same height
-          regardless of the source photo's own aspect ratio. Previously the
-          image sat in normal flow with height:auto, so each photo's own
-          aspect ratio stretched the box to a different height per slide —
-          that's what was shoving the "Book A Room" bar (and everything
-          below it) up/down as the carousel slid between images. */}
+    <div
+      className="wt-bnr-inr overlay-wraper"
+      style={{
+        position: 'relative',
+        background: '#000',
+        // The theme's `.wt-bnr-inr` class hard-codes a *fixed* pixel height
+        // (500px desktop / 330px mobile) regardless of window width. On a
+        // wide monitor that turns into a very short, very wide letterbox —
+        // object-fit:contain still shows the whole photo with nothing
+        // cropped, but squeezed into such a short strip it looks zoomed/
+        // squished. clamp() ties the height to viewport width instead, so
+        // a big screen gets a proportionally taller banner (closer to what
+        // a laptop-width window already looked like) instead of the same
+        // flat 500px everywhere.
+        height: 'clamp(340px, 46vw, 680px)',
+      }}
+    >
+      {/* object-fit:contain keeps every slide inside that height without
+          ever cropping the photo — the full image always renders,
+          letterboxed on the black background above if its aspect ratio
+          doesn't exactly match the box. */}
       <img
         src={imageUrl}
         alt={imageAlt || ''}
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center' }}
       />
       <div className="overlay-main bg-black opacity-05" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
       <div className="container" style={{ position: 'absolute', top: 0, left: '50%', right: 'auto', bottom: 0, transform: 'translateX(-50%)', zIndex: 2, width: '100%' }}>
