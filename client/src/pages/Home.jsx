@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import api from '../api/client';
 import BookingSearchForm from '../components/BookingSearchForm';
 import RoomCard from '../components/RoomCard';
@@ -477,7 +477,7 @@ function RoomsFacilitiesSection({ rooms, loadingRooms, facilities }) {
   const activeFacility = facilities.find((f) => f.key === activeKey) || null;
 
   return (
-    <div className="section-full p-tb90 bg-gray">
+    <div id="amenities" className="section-full p-tb90 bg-gray">
       <div className="container">
         <div className="section-head text-center">
           <h2 className="m-b5" data-title="Suites">Our Rooms &amp; Suites</h2>
@@ -576,6 +576,18 @@ export default function Home() {
   const [services, setServices] = useState([]);
   const [galleryCategories, setGalleryCategories] = useState([]);
   const [facilities, setFacilities] = useState([]);
+  const location = useLocation();
+
+  // Lets the header's "Amenities" nav item link here from any page: it
+  // navigates to "/" with { scrollTo: 'amenities' } in router state, and
+  // once we land, this scrolls down to the "Our Rooms & Suites" section
+  // instead of leaving the visitor stranded at the top of the page.
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const el = document.getElementById(location.state.scrollTo);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     let active = true;

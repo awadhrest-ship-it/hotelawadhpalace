@@ -8608,3 +8608,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', e
 
 
 .services-part-left .wt-icon-box-wraper .wt-tilte{font-size: 16px;}
+
+/* Home "Our Gallery" carousel — push the prev/next arrows out into the
+   whitespace beside the cards instead of overlapping the first/last card,
+   scoped to this carousel only so no other owl-btn-vertical-center slider
+   on the site is affected. */
+.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-prev,
+.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-next {
+	top: 50%;
+	margin: -20px 0 0;
+}
+@media only screen and (min-width: 1400px) {
+	.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-prev {left: -60px;}
+	.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-next {right: -60px;}
+}
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+	.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-prev {left: -45px;}
+	.gallery-cats-carousel.owl-btn-vertical-center .owl-nav .owl-next {right: -45px;}
+}

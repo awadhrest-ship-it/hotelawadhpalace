@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const NAV = [
   {
@@ -7,8 +7,11 @@ const NAV = [
     to: '/',
   },
   {
-    label: 'Rooms',
-    to: '/rooms',
+    // Was a "Rooms" link to the standalone /rooms page. Now points at the
+    // "Our Rooms & Suites" (id="amenities") section on the home page —
+    // scrollTo drives the click handler below instead of a normal route.
+    label: 'Amenities',
+    scrollTo: 'amenities',
   },
   {
     label: 'Gallery',
@@ -33,6 +36,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const headerRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
   // Waypoint.Sticky needs to sit on the same element the theme CSS expects
   // (.sticky-header) — not the outer <header> — otherwise `.is-fixed` and
   // `.color-fill` never land where `.header-style-1 .is-fixed.color-fill
@@ -64,6 +69,21 @@ export default function Header() {
 
   const toggleSubmenu = (label) => {
     setOpenSubmenu((prev) => (prev === label ? null : label));
+  };
+
+  // Shared by any nav item with a "scrollTo" id instead of a real route:
+  // scroll straight there if we're already on the home page, otherwise
+  // navigate home and let Home's own effect finish the scroll once the
+  // section has mounted.
+  const handleScrollNavClick = (item, e) => {
+    e.preventDefault();
+    setDrawerOpen(false);
+    if (location.pathname === '/') {
+      const el = document.getElementById(item.scrollTo);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/', { state: { scrollTo: item.scrollTo } });
+    }
   };
 
   return (
@@ -107,9 +127,15 @@ export default function Header() {
                         : undefined
                     }
                   >
-                    <NavLink to={item.to} end={item.to === '/'} onClick={() => setDrawerOpen(false)}>
-                      {item.label}
-                    </NavLink>
+                    {item.scrollTo ? (
+                      <a href={`#${item.scrollTo}`} onClick={(e) => handleScrollNavClick(item, e)}>
+                        {item.label}
+                      </a>
+                    ) : (
+                      <NavLink to={item.to} end={item.to === '/'} onClick={() => setDrawerOpen(false)}>
+                        {item.label}
+                      </NavLink>
+                    )}
                     {item.children && (
                       <>
                         <div
