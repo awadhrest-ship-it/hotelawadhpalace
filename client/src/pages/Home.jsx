@@ -71,14 +71,17 @@ function HeroSlide({ imageUrl, imageAlt, children }) {
         height: 'clamp(340px, 46vw, 680px)',
       }}
     >
-      {/* object-fit:contain keeps every slide inside that height without
-          ever cropping the photo — the full image always renders,
-          letterboxed on the black background above if its aspect ratio
-          doesn't exactly match the box. */}
+      {/* Switched back to object-fit:cover — the earlier "contain" version
+          avoided cropping but left black letterbox bars on the sides
+          whenever an image's aspect ratio didn't exactly match the box,
+          which is worse in practice. cover fills the entire box edge to
+          edge with no bars; the clamp() height above (taller on wide
+          screens) keeps the amount actually cropped off the top/bottom
+          much smaller than the old fixed 500px box did. */}
       <img
         src={imageUrl}
         alt={imageAlt || ''}
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center' }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
       />
       <div className="overlay-main bg-black opacity-05" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }} />
       <div className="container" style={{ position: 'absolute', top: 0, left: '50%', right: 'auto', bottom: 0, transform: 'translateX(-50%)', zIndex: 2, width: '100%' }}>
