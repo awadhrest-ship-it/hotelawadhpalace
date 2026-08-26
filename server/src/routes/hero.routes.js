@@ -29,6 +29,9 @@ router.post(
       image: { url, publicId, alt: req.body.alt || 'Hero image', order: (maxOrder?.image?.order || 0) + 1 },
       title: req.body.title || '',
       subtitle: req.body.subtitle || '',
+      buttonText: req.body.buttonText ?? 'Explore Rooms',
+      buttonLink: req.body.buttonLink || '/rooms',
+      showButton: req.body.showButton !== undefined ? req.body.showButton === 'true' || req.body.showButton === true : true,
       order: (maxOrder?.image?.order || 0) + 1,
       active: true,
     });

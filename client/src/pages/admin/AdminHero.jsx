@@ -6,7 +6,7 @@ export default function AdminHero() {
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ title: '', subtitle: '' });
+  const [editForm, setEditForm] = useState({ title: '', subtitle: '', buttonText: '', buttonLink: '', showButton: true });
 
   const load = async () => {
     const { data } = await api.get('/hero/admin/all');
@@ -25,7 +25,13 @@ export default function AdminHero() {
       fd.append('image', file);
       fd.append('title', '');
       fd.append('subtitle', '');
-      await api.post('/hero', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      // Uploads (especially larger hero images) can take longer than the
+      // 15s default set on the shared `api` client, so give this request
+      // more headroom instead of raising the timeout for every endpoint.
+      await api.post('/hero', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 60000,
+      });
       await load();
     } catch (err) {
       setError(err.message);
@@ -36,7 +42,13 @@ export default function AdminHero() {
 
   const startEdit = (hero) => {
     setEditingId(hero._id);
-    setEditForm({ title: hero.title, subtitle: hero.subtitle });
+    setEditForm({
+      title: hero.title,
+      subtitle: hero.subtitle,
+      buttonText: hero.buttonText ?? 'Explore Rooms',
+      buttonLink: hero.buttonLink ?? '/rooms',
+      showButton: hero.showButton !== false,
+    });
   };
 
   const saveEdit = async () => {
@@ -118,6 +130,40 @@ export default function AdminHero() {
                       style={input}
                     />
                   </div>
+                  <div style={{ marginBottom: 12 }}>
+                    <label style={labelCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={editForm.showButton}
+                        onChange={(e) => setEditForm((f) => ({ ...f, showButton: e.target.checked }))}
+                      />
+                      Show button on this slide
+                    </label>
+                  </div>
+                  {editForm.showButton && (
+                    <>
+                      <div style={{ marginBottom: 12 }}>
+                        <label style={label}>Button Text</label>
+                        <input
+                          type="text"
+                          value={editForm.buttonText}
+                          onChange={(e) => setEditForm((f) => ({ ...f, buttonText: e.target.value }))}
+                          placeholder="e.g., 'Explore Rooms', 'Book Now'"
+                          style={input}
+                        />
+                      </div>
+                      <div style={{ marginBottom: 12 }}>
+                        <label style={label}>Button Link</label>
+                        <input
+                          type="text"
+                          value={editForm.buttonLink}
+                          onChange={(e) => setEditForm((f) => ({ ...f, buttonLink: e.target.value }))}
+                          placeholder="e.g., '/rooms' or 'https://example.com'"
+                          style={input}
+                        />
+                      </div>
+                    </>
+                  )}
                   <button type="button" onClick={saveEdit} style={btnPrimary}>
                     Save
                   </button>
@@ -129,6 +175,11 @@ export default function AdminHero() {
                 <div>
                   <h3 style={{ margin: '0 0 8px' }}>{hero.title || '(No title)'}</h3>
                   <p style={{ margin: '0 0 8px', color: '#666', fontSize: 13 }}>{hero.subtitle || '(No subtitle)'}</p>
+                  <p style={{ margin: '0 0 8px', color: '#666', fontSize: 13 }}>
+                    Button: {hero.showButton !== false
+                      ? `"${hero.buttonText || 'Explore Rooms'}" → ${hero.buttonLink || '/rooms'}`
+                      : '(hidden)'}
+                  </p>
                   <label style={{ ...labelCheckbox }}>
                     <input type="checkbox" checked={hero.active} onChange={() => toggleActive(hero._id, hero.active)} />
                     Active

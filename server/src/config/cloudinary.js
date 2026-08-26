@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-const MAX_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_BYTES = 20 * 1024 * 1024; // 20MB
 
 export function assertValidImage(file) {
   if (!file) throw Object.assign(new Error('No file provided'), { status: 400 });
@@ -17,7 +17,7 @@ export function assertValidImage(file) {
     throw Object.assign(new Error('Unsupported image type'), { status: 400 });
   }
   if (file.size > MAX_BYTES) {
-    throw Object.assign(new Error('Image exceeds 5MB limit'), { status: 400 });
+    throw Object.assign(new Error('Image exceeds 20MB limit'), { status: 400 });
   }
 }
 

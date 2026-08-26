@@ -17,6 +17,10 @@ const ICON_BOXES = [
 
 const ABOUT_SLIDES = [1, 2, 3, 4, 5];
 
+function isExternalLink(url) {
+  return /^https?:\/\//i.test(url || '');
+}
+
 const HERO_TITLE_STYLE = {
   maxWidth: 700,
   fontSize: 'clamp(30px, 4.4vw, 56px)',
@@ -174,28 +178,29 @@ function HeroSlider({ heroes }) {
         {heroes.map((hero) => (
           <div key={hero._id} className="item">
             <HeroSlide imageUrl={hero.image.url} imageAlt={hero.title}>
-              {hero.title || hero.subtitle ? (
-                <div>
-                  {hero.title && (
-                    <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
-                      {hero.title}
-                    </h1>
-                  )}
-                  {hero.subtitle && (
-                    <p className="text-white" style={HERO_SUBTITLE_STYLE}>
-                      {hero.subtitle}
-                    </p>
-                  )}
-                  <Link to="/rooms" className="btn-half site-button button-lg">
-                    <span>Explore Rooms</span><em />
-                  </Link>
-                </div>
-              ) : (
-                <HeroText
-                  title="Welcome to Hotel Awadh Palace"
-                  subtitle="A place where comfort meets elegance. Book your stay and experience genuine hospitality."
-                />
-              )}
+              <div>
+                {hero.title && (
+                  <h1 className="text-white font-weight-900" style={HERO_TITLE_STYLE}>
+                    {hero.title}
+                  </h1>
+                )}
+                {hero.subtitle && (
+                  <p className="text-white" style={HERO_SUBTITLE_STYLE}>
+                    {hero.subtitle}
+                  </p>
+                )}
+                {hero.showButton !== false && hero.buttonText && (
+                  isExternalLink(hero.buttonLink) ? (
+                    <a href={hero.buttonLink} target="_blank" rel="noopener noreferrer" className="btn-half site-button button-lg">
+                      <span>{hero.buttonText}</span><em />
+                    </a>
+                  ) : (
+                    <Link to={hero.buttonLink || '/rooms'} className="btn-half site-button button-lg">
+                      <span>{hero.buttonText}</span><em />
+                    </Link>
+                  )
+                )}
+              </div>
             </HeroSlide>
           </div>
         ))}
