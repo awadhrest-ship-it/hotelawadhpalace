@@ -266,14 +266,25 @@ function HeroSlider({ heroes }) {
   );
 }
 
-function AboutSlider() {
+function AboutSlider({ images }) {
+  // Falls back to the bundled static images until an admin uploads at
+  // least one image from Admin > About Images, so the section never goes
+  // blank while the collection is empty. The parent only mounts this once
+  // the fetch has settled (see loadingAboutImages in Home()), so the slide
+  // content here is final and Owl Carousel only ever initializes once —
+  // switching its content after mount fights with the plugin's own DOM
+  // manipulation (cloning/wrapping slides) and crashes React's reconciler.
+  const slides = images.length > 0
+    ? images.map((img) => ({ key: img._id, src: img.image.url, alt: img.image.alt || 'About Awadh Palace' }))
+    : ABOUT_SLIDES.map((n) => ({ key: n, src: `/assets/images/about/pic${n}.jpg`, alt: `About Awadh Palace ${n}` }));
+
   const ref = useOwlCarousel({ loop: true, autoplay: true, items: 1, nav: true, dots: false });
   return (
     <div ref={ref} className="home-about-slider owl-carousel owl-btn-vertical-center">
-      {ABOUT_SLIDES.map((n) => (
-        <div className="item" key={n}>
+      {slides.map((slide) => (
+        <div className="item" key={slide.key}>
           <div className="home-about-slider-pic">
-            <img src={`/assets/images/about/pic${n}.jpg`} alt={`About Awadh Palace ${n}`} />
+            <img src={slide.src} alt={slide.alt} />
           </div>
         </div>
       ))}
@@ -590,6 +601,8 @@ export default function Home() {
   const [services, setServices] = useState([]);
   const [galleryCategories, setGalleryCategories] = useState([]);
   const [facilities, setFacilities] = useState([]);
+  const [aboutImages, setAboutImages] = useState([]);
+  const [loadingAboutImages, setLoadingAboutImages] = useState(true);
   const location = useLocation();
 
   // Lets the header's "Amenities" nav item link here from any page: it
@@ -634,6 +647,18 @@ export default function Home() {
     api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
     api.get('/gallery-categories/featured').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
     api.get('/facilities').then(({ data }) => active && setFacilities(data.data)).catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/about-images')
+      .then(({ data }) => active && setAboutImages(data.data))
+      .catch(() => {})
+      .finally(() => active && setLoadingAboutImages(false));
     return () => {
       active = false;
     };
@@ -702,7 +727,11 @@ export default function Home() {
                 style={{ backgroundImage: 'url(/assets/images/background/bg-dot.jpg)' }}
               >
                 <div className="home-about-block-inner">
-                  <AboutSlider />
+                  {loadingAboutImages ? (
+                    <div style={{ minHeight: 420 }} />
+                  ) : (
+                    <AboutSlider images={aboutImages} />
+                  )}
                 </div>
               </div>
             </div>

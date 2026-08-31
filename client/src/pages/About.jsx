@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import PageBanner from '../components/PageBanner';
 import Counter from '../components/Counter';
+import api from '../api/client';
 
 const ICON_BOXES = [
   { icon: 'flaticon-room-service', title: 'Restaurants', text: 'Fine dining crafted by award-winning chefs.' },
@@ -9,6 +11,22 @@ const ICON_BOXES = [
 ];
 
 export default function About() {
+  // Same admin-managed "About Images" collection used on the homepage
+  // slider (Admin > About Images). Falls back to the bundled static image
+  // until an admin uploads one, so this photo never goes blank.
+  const [aboutImage, setAboutImage] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/about-images')
+      .then(({ data }) => active && data.data.length > 0 && setAboutImage(data.data[0]))
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <>
       <PageBanner title="About Us" crumbs={[{ label: 'About Us' }]} image="/assets/images/banner/1.jpg" />
@@ -49,8 +67,8 @@ export default function About() {
 
               <div className="col-lg-6 col-md-12">
                 <img
-                  src="/assets/images/about/pic1.jpg"
-                  alt="Hotel Awadh Palace"
+                  src={aboutImage?.image?.url || '/assets/images/about/pic1.jpg'}
+                  alt={aboutImage?.image?.alt || 'Hotel Awadh Palace'}
                   style={{ width: '100%', borderRadius: 4 }}
                 />
               </div>
