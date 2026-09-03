@@ -512,6 +512,16 @@ function RoomsFacilitiesSection({ rooms, loadingRooms, facilities }) {
                 )}
                 <h3 className="m-b20">{activeFacility.name}</h3>
                 <p>{activeFacility.description}</p>
+                {activeFacility.menuLink && (
+                  <a
+                    href={activeFacility.menuLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-half site-button button-lg m-t20"
+                  >
+                    <span>View Menu</span><em />
+                  </a>
+                )}
               </div>
             </div>
           </div>
