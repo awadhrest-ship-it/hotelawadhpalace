@@ -13,6 +13,13 @@ export default function About() {
   // 4 feature boxes. Keeping this in one place means editing it once
   // in the admin panel updates both the homepage and this page.
   const [aboutSection, setAboutSection] = useState(null);
+  // Powers the "By The Numbers" section background below (Admin >
+  // Specialization > "By The Numbers" Background). Falls back to the
+  // original bundled image until an admin uploads one.
+  const [numbersBackground, setNumbersBackground] = useState(null);
+  // Admin > Settings > Page Banner Images ("About Us"). Falls back to the
+  // original bundled banner until an admin uploads one.
+  const [pageBanner, setPageBanner] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -24,6 +31,14 @@ export default function About() {
       .get('/about-section')
       .then(({ data }) => active && setAboutSection(data.data))
       .catch(() => {});
+    api
+      .get('/specialization')
+      .then(({ data }) => active && setNumbersBackground(data.data?.numbersBackground))
+      .catch(() => {});
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.about))
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -31,7 +46,7 @@ export default function About() {
 
   return (
     <>
-      <PageBanner title="About Us" crumbs={[{ label: 'About Us' }]} image="/assets/images/banner/1.jpg" />
+      <PageBanner title="About Us" crumbs={[{ label: 'About Us' }]} image={pageBanner?.url || '/assets/images/banner/1.jpg'} />
 
       <div className="section-full p-tb90 bg-white overflow-hide">
         <div className="container">
@@ -80,7 +95,7 @@ export default function About() {
 
       <div
         className="section-full p-tb90 overlay-wraper"
-        style={{ backgroundImage: 'url(/assets/images/background/bg-2.jpg)' }}
+        style={{ backgroundImage: `url(${numbersBackground?.url || '/assets/images/background/bg-2.jpg'})` }}
       >
         <div className="overlay-main opacity-08 bg-black" />
         <div className="container">

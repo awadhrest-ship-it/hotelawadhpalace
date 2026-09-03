@@ -9,6 +9,19 @@ export default function Gallery() {
   const [allItems, setAllItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || null);
+  // Admin > Settings > Page Banner Images ("Gallery").
+  const [pageBanner, setPageBanner] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.gallery))
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -71,7 +84,7 @@ export default function Gallery() {
 
   return (
     <>
-      <PageBanner title="Gallery" crumbs={[{ label: 'Gallery' }]} image="/assets/images/banner/3.jpg" />
+      <PageBanner title="Gallery" crumbs={[{ label: 'Gallery' }]} image={pageBanner?.url || '/assets/images/banner/3.jpg'} />
       <div className="section-full p-tb80 bg-white">
         <div className="container">
           {loading && <p className="text-center w-100">Loading gallery&hellip;</p>}

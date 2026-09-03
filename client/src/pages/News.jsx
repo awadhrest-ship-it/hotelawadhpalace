@@ -6,6 +6,8 @@ import api from '../api/client';
 export default function News() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Admin > Settings > Page Banner Images ("Blog Listing").
+  const [pageBanner, setPageBanner] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -13,6 +15,10 @@ export default function News() {
       .get('/blog')
       .then(({ data }) => active && setPosts(data.data))
       .finally(() => active && setLoading(false));
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.blog))
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -20,7 +26,7 @@ export default function News() {
 
   return (
     <>
-      <PageBanner title="Our Blog" crumbs={[{ label: 'Blog' }]} image="/assets/images/banner/2.jpg" />
+      <PageBanner title="Our Blog" crumbs={[{ label: 'Blog' }]} image={pageBanner?.url || '/assets/images/banner/2.jpg'} />
       <div className="section-full p-tb80 bg-white">
         <div className="container">
           <div className="portfolio-wrap news-grid clearfix">

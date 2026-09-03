@@ -9,6 +9,19 @@ export default function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Admin > Settings > Page Banner Images ("Rooms & Suites").
+  const [pageBanner, setPageBanner] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.rooms))
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
@@ -46,7 +59,7 @@ export default function Rooms() {
 
   return (
     <>
-      <PageBanner title="Rooms & Suites" crumbs={[{ label: 'Rooms' }]} image="/assets/images/banner/2.jpg" />
+      <PageBanner title="Rooms & Suites" crumbs={[{ label: 'Rooms' }]} image={pageBanner?.url || '/assets/images/banner/2.jpg'} />
 
       <div className="section-full p-tb80 bg-white">
         <div className="container">

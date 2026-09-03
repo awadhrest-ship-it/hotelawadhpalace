@@ -1,6 +1,18 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
 
+// Matches PAGE_BANNER_KEYS in server/src/routes/setting.routes.js and the
+// `image` prop each page passes to <PageBanner> when no admin image is set.
+const PAGE_BANNERS = [
+  { key: 'about', label: 'About Us', fallback: '/assets/images/banner/1.jpg' },
+  { key: 'contact', label: 'Contact Us', fallback: '/assets/images/banner/4.jpg' },
+  { key: 'gallery', label: 'Gallery', fallback: '/assets/images/banner/3.jpg' },
+  { key: 'rooms', label: 'Rooms & Suites', fallback: '/assets/images/banner/2.jpg' },
+  { key: 'roomDetail', label: 'Single Room Page', fallback: '/assets/images/banner/3.jpg' },
+  { key: 'blog', label: 'Blog Listing', fallback: '/assets/images/banner/2.jpg' },
+  { key: 'blogDetail', label: 'Single Blog Post', fallback: '/assets/images/banner/2.jpg' },
+];
+
 export default function AdminSettings() {
   const [form, setForm] = useState(null);
   const [error, setError] = useState('');
@@ -50,6 +62,25 @@ export default function AdminSettings() {
       setError(err.message);
     } finally {
       setUploadingBg(false);
+    }
+  };
+
+  const [uploadingBanner, setUploadingBanner] = useState('');
+
+  const uploadPageBanner = async (pageKey, file) => {
+    setUploadingBanner(pageKey);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const { data } = await api.post(`/settings/page-banner/${pageKey}/image`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setForm(data.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploadingBanner('');
     }
   };
 
@@ -113,6 +144,39 @@ export default function AdminSettings() {
             onChange={(e) => e.target.files[0] && uploadTestimonialsBg(e.target.files[0])}
           />
         </label>
+      </div>
+
+      <div style={card}>
+        <h3 style={{ marginTop: 0 }}>Page Banner Images</h3>
+        <p style={{ color: '#666', fontSize: 13, marginTop: -6 }}>
+          The dark image behind the title and breadcrumb at the top of each page (e.g. the &ldquo;About
+          Us&rdquo; banner). Each page keeps using its original built-in image until you upload a
+          replacement here.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+          {PAGE_BANNERS.map(({ key, label, fallback }) => {
+            const current = form.pageBanners?.[key]?.url || fallback;
+            return (
+              <div key={key} style={{ border: '1px solid #eee', borderRadius: 6, padding: 12 }}>
+                <img
+                  src={current}
+                  alt={label}
+                  style={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 4, marginBottom: 10 }}
+                />
+                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>{label}</div>
+                <label style={{ ...btnSecondary, display: 'inline-block', cursor: 'pointer' }}>
+                  {uploadingBanner === key ? 'Uploading...' : form.pageBanners?.[key]?.url ? 'Replace image' : 'Upload image'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => e.target.files[0] && uploadPageBanner(key, e.target.files[0])}
+                  />
+                </label>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

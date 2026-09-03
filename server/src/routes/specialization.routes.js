@@ -14,6 +14,10 @@ const DEFAULT_TEXT =
   'Sed laoreet aliquam leo. Ut tellus dolor, dapibus eget, elementum vel, cursus eleifend, elit. ' +
   'Aenean auctor wisi et urna. Aliquam erat volutpat. Duis ac turpis.';
 
+// Default image for the About page's "By The Numbers" section background,
+// matching the path that used to be hardcoded in About.jsx.
+const DEFAULT_NUMBERS_BG = { url: '/assets/images/background/bg-2.jpg', publicId: 'seed-numbers-bg', order: 0 };
+
 async function getOrCreate() {
   let doc = await Specialization.findOne({ key: 'main' });
   if (!doc) {
@@ -31,7 +35,12 @@ async function getOrCreate() {
         { icon: 'flaticon-cheers', title: 'Luxury Bars', image: { url: '/assets/images/background/architecture.jpg', publicId: 'seed-bars', order: 2 }, order: 2 },
         { icon: 'flaticon-seats-at-the-hall', title: 'Meeting Hall', image: { url: '/assets/images/background/interior.jpg', publicId: 'seed-meeting', order: 3 }, order: 3 },
       ],
+      numbersBackground: DEFAULT_NUMBERS_BG,
     });
+  } else if (!doc.numbersBackground || !doc.numbersBackground.url) {
+    // Backfill for documents created before numbersBackground existed.
+    doc.numbersBackground = DEFAULT_NUMBERS_BG;
+    await doc.save();
   }
   return doc;
 }
@@ -78,6 +87,19 @@ router.post('/features/:featureId/image', requireAuth, upload.single('image'), a
   }
   const { secure_url: url, public_id: publicId } = await uploadBufferToCloudinary(req.file.buffer, 'specialization');
   feature.image = { url, publicId, alt: feature.title, order: feature.order };
+  await doc.save();
+  res.json({ success: true, data: doc });
+}));
+
+// Replace the About page "By The Numbers" section background image.
+router.post('/numbers-background/image', requireAuth, upload.single('image'), asyncHandler(async (req, res) => {
+  assertValidImage(req.file);
+  const doc = await getOrCreate();
+  if (doc.numbersBackground?.publicId && !doc.numbersBackground.publicId.startsWith('seed-')) {
+    await deleteFromCloudinary(doc.numbersBackground.publicId);
+  }
+  const { secure_url: url, public_id: publicId } = await uploadBufferToCloudinary(req.file.buffer, 'specialization');
+  doc.numbersBackground = { url, publicId, alt: 'By The Numbers section background', order: 0 };
   await doc.save();
   res.json({ success: true, data: doc });
 }));

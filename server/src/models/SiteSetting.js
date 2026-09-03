@@ -17,6 +17,18 @@ const siteSettingSchema = new mongoose.Schema(
     checkInTime: { type: String, default: '12:00 PM' },
     checkOutTime: { type: String, default: '11:00 AM' },
     testimonialsBgImage: imageSchema,
+    // Per-page hero banner (the dark image behind each page's title +
+    // breadcrumb, e.g. "About Us" / "Contact Us"). Optional — pages fall
+    // back to their original bundled image until an admin uploads one.
+    pageBanners: {
+      about: imageSchema,
+      contact: imageSchema,
+      gallery: imageSchema,
+      rooms: imageSchema,
+      roomDetail: imageSchema,
+      blog: imageSchema,
+      blogDetail: imageSchema,
+    },
   },
   { timestamps: true }
 );

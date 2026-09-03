@@ -8,6 +8,8 @@ export default function NewsDetail() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Admin > Settings > Page Banner Images ("Single Blog Post").
+  const [pageBanner, setPageBanner] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -17,6 +19,10 @@ export default function NewsDetail() {
       .then(({ data }) => active && setPost(data.data))
       .catch((err) => active && setError(err.message))
       .finally(() => active && setLoading(false));
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.blogDetail))
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -34,7 +40,7 @@ export default function NewsDetail() {
 
   return (
     <>
-      <PageBanner title={post.title} crumbs={[{ label: 'Blog', to: '/news' }, { label: post.title }]} image="/assets/images/banner/2.jpg" />
+      <PageBanner title={post.title} crumbs={[{ label: 'Blog', to: '/news' }, { label: post.title }]} image={pageBanner?.url || '/assets/images/banner/2.jpg'} />
       <div className="section-full p-tb80 bg-white">
         <div className="container">
           <div className="row justify-content-center">

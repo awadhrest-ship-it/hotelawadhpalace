@@ -32,6 +32,11 @@ const specializationSchema = new mongoose.Schema(
     text: { type: String, default: '' },
     counters: { type: [counterSchema], default: [] },
     features: { type: [featureSchema], default: [] },
+    // Background image for the About page's "By The Numbers" section
+    // (same stat counters, shown again on /about). Not required so old
+    // documents created before this field existed still load fine —
+    // specialization.routes.js backfills it on read.
+    numbersBackground: { type: imageSchema, required: false },
   },
   { timestamps: true }
 );

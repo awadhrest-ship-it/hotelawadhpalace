@@ -27,6 +27,19 @@ export default function RoomDetail() {
   const [submitting, setSubmitting] = useState(false);
   const [bookingResult, setBookingResult] = useState(null);
   const [bookingError, setBookingError] = useState('');
+  // Admin > Settings > Page Banner Images ("Single Room Page").
+  const [pageBanner, setPageBanner] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/settings')
+      .then(({ data }) => active && setPageBanner(data.data?.pageBanners?.roomDetail))
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -90,7 +103,7 @@ export default function RoomDetail() {
 
   return (
     <>
-      <PageBanner title={room.name} crumbs={[{ label: 'Rooms', to: '/rooms' }, { label: room.name }]} image="/assets/images/banner/3.jpg" />
+      <PageBanner title={room.name} crumbs={[{ label: 'Rooms', to: '/rooms' }, { label: room.name }]} image={pageBanner?.url || '/assets/images/banner/3.jpg'} />
 
       <div className="section-full p-tb80">
         <div className="container">

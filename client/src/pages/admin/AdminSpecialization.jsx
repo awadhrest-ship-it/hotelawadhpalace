@@ -74,6 +74,19 @@ export default function AdminSpecialization() {
     }
   };
 
+  const uploadNumbersBackground = async (file) => {
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const { data: res } = await api.post('/specialization/numbers-background/image', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setData(res.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (!data) return <p>Loading&hellip;</p>;
 
   return (
@@ -114,6 +127,30 @@ export default function AdminSpecialization() {
         <button type="button" style={btnPrimary} onClick={saveMain} disabled={saving}>
           {saving ? 'Saving...' : 'Save heading, text & counters'}
         </button>
+      </div>
+
+      <div style={card}>
+        <h3 style={{ marginTop: 0 }}>&quot;By The Numbers&quot; Background (About Page)</h3>
+        <p style={{ fontSize: 13, color: '#666', marginTop: -4 }}>
+          Same 3 stat counters, shown again on the About page in a plain full-width dark section
+          (no hover tiles). This controls just that section&apos;s background photo.
+        </p>
+        {data.numbersBackground?.url && (
+          <img
+            src={data.numbersBackground.url}
+            alt="By The Numbers background"
+            style={{ width: '100%', maxWidth: 420, height: 160, objectFit: 'cover', borderRadius: 4, marginBottom: 10 }}
+          />
+        )}
+        <label style={{ ...btnSecondary, cursor: 'pointer', display: 'inline-block' }}>
+          Change image
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={(e) => e.target.files[0] && uploadNumbersBackground(e.target.files[0])}
+          />
+        </label>
       </div>
 
       <div style={card}>

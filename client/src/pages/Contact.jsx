@@ -19,7 +19,7 @@ export default function Contact() {
 
   return (
     <>
-      <PageBanner title="Contact Us" crumbs={[{ label: 'Contact Us' }]} image="/assets/images/banner/4.jpg" />
+      <PageBanner title="Contact Us" crumbs={[{ label: 'Contact Us' }]} image={settings?.pageBanners?.contact?.url || '/assets/images/banner/4.jpg'} />
 
       <div className="section-full p-tb80">
         <div className="container">
