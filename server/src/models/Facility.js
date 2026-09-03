@@ -16,6 +16,9 @@ const facilitySchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     tagline: { type: String, default: '' },
     description: { type: String, default: '' },
+    // Optional external link (e.g. an AnyFlip menu) shown as a "View Menu"
+    // button on this tab. Left blank, no button is shown.
+    menuLink: { type: String, default: '', trim: true },
     image: { type: imageSchema },
     order: { type: Number, default: 0 },
     active: { type: Boolean, default: true },

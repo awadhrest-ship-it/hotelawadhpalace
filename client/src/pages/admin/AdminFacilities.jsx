@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
 
-const EMPTY = { tabLabel: '', name: '', tagline: '', description: '', order: 0 };
+const EMPTY = { tabLabel: '', name: '', tagline: '', description: '', menuLink: '', order: 0 };
 
 function slugify(text) {
   return text
@@ -36,6 +36,7 @@ export default function AdminFacilities() {
       name: item.name,
       tagline: item.tagline || '',
       description: item.description || '',
+      menuLink: item.menuLink || '',
       order: item.order,
     });
   };
@@ -140,6 +141,14 @@ export default function AdminFacilities() {
             </div>
             <label style={label}>Description</label>
             <textarea style={{ ...input, minHeight: 80 }} value={createForm.description} onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))} />
+            <label style={label}>Menu link (optional — e.g. an AnyFlip menu URL. Shows a &ldquo;View Menu&rdquo; button on this tab.)</label>
+            <input
+              type="url"
+              style={input}
+              placeholder="https://anyflip.com/..."
+              value={createForm.menuLink}
+              onChange={(e) => setCreateForm((f) => ({ ...f, menuLink: e.target.value }))}
+            />
             <div style={{ marginTop: 12 }}>
               <button type="submit" style={btnPrimary}>Save</button>
               <button type="button" style={btnSecondary} onClick={() => { setCreating(false); setCreateForm(EMPTY); }}>Cancel</button>
@@ -193,6 +202,14 @@ export default function AdminFacilities() {
                   </div>
                   <label style={label}>Description</label>
                   <textarea style={{ ...input, minHeight: 80 }} value={editForm.description} onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))} />
+                  <label style={label}>Menu link (optional — e.g. an AnyFlip menu URL. Shows a &ldquo;View Menu&rdquo; button on this tab.)</label>
+                  <input
+                    type="url"
+                    style={input}
+                    placeholder="https://anyflip.com/..."
+                    value={editForm.menuLink}
+                    onChange={(e) => setEditForm((f) => ({ ...f, menuLink: e.target.value }))}
+                  />
                   <div style={{ marginTop: 12 }}>
                     <button type="button" style={btnPrimary} onClick={saveEdit}>Save</button>
                     <button type="button" style={btnSecondary} onClick={() => setEditingId(null)}>Cancel</button>
@@ -206,6 +223,11 @@ export default function AdminFacilities() {
                   <h3 style={{ margin: '0 0 4px' }}>{item.name}</h3>
                   {item.tagline && <p style={{ margin: '0 0 6px', fontStyle: 'italic', color: '#888', fontSize: 13 }}>{item.tagline}</p>}
                   <p style={{ margin: '0 0 10px', color: '#666', fontSize: 13 }}>{item.description}</p>
+                  {item.menuLink && (
+                    <p style={{ margin: '0 0 10px', fontSize: 13 }}>
+                      <a href={item.menuLink} target="_blank" rel="noreferrer">{item.menuLink}</a>
+                    </p>
+                  )}
                   <label style={labelCheckbox}>
                     <input type="checkbox" checked={item.active} onChange={() => toggleActive(item._id, item.active)} /> Active
                   </label>

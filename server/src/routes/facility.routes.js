@@ -22,6 +22,7 @@ const DEFAULTS = [
     description:
       'Savour authentic Awadhi flavours alongside a curated multi-cuisine menu, served in an elegant dining room by a team dedicated to every detail of your meal.',
     image: { url: '/assets/images/background/appartment.jpg', publicId: 'seed-facility-restaurant', order: 0 },
+    menuLink: 'https://anyflip.com/agwph/kkdf/',
     order: 1,
   },
   {
@@ -32,6 +33,7 @@ const DEFAULTS = [
     description:
       "Step back in time at the 90's Bar — nostalgic decor, a curated cocktail list, and a relaxed soundtrack that make it the perfect spot to unwind.",
     image: { url: '/assets/images/background/architecture.jpg', publicId: 'seed-facility-bar', order: 0 },
+    menuLink: 'https://anyflip.com/ujxfa/ifbm/',
     order: 2,
   },
   {
@@ -94,13 +96,14 @@ router.post(
   [body('key').trim().notEmpty(), body('tabLabel').trim().notEmpty(), body('name').trim().notEmpty()],
   validate,
   asyncHandler(async (req, res) => {
-    const { key, tabLabel, name, tagline, description, order, active } = req.body;
+    const { key, tabLabel, name, tagline, description, menuLink, order, active } = req.body;
     const item = await Facility.create({
       key: key.toLowerCase(),
       tabLabel,
       name,
       tagline: tagline || '',
       description: description || '',
+      menuLink: menuLink || '',
       order: order ?? 0,
       active: active ?? true,
     });
@@ -110,7 +113,7 @@ router.post(
 
 // ADMIN: update a tab's text fields / order / active state.
 router.put('/:id', requireAuth, asyncHandler(async (req, res) => {
-  const allowed = ['key', 'tabLabel', 'name', 'tagline', 'description', 'order', 'active'];
+  const allowed = ['key', 'tabLabel', 'name', 'tagline', 'description', 'menuLink', 'order', 'active'];
   const updates = {};
   for (const field of allowed) {
     if (req.body[field] !== undefined) updates[field] = req.body[field];

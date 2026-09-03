@@ -408,9 +408,6 @@ function ServicesSection({ services }) {
             </div>
           ))}
         </div>
-        <div className="text-center">
-          <Link to="/rooms" className="btn-half site-button button-lg m-t50"><span>View All</span><em /></Link>
-        </div>
       </div>
     </div>
   );
