@@ -59,6 +59,22 @@ export default function App() {
         </Route>
         */}
 
+        {/* ------------------------------------------------------------------
+            Hidden preview of the real site while maintenance mode is on.
+            Not linked anywhere — only reachable if you type the URL.
+            Same pages as before, just mounted under /preview instead of /.
+        ------------------------------------------------------------------- */}
+        <Route path="/preview" element={<PublicLayout />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="rooms" element={<Rooms />} />
+          <Route path="rooms/:slug" element={<RoomDetail />} />
+          <Route path="news" element={<News />} />
+          <Route path="news/:slug" element={<NewsDetail />} />
+          <Route path="gallery" element={<Gallery />} />
+        </Route>
+
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
