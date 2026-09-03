@@ -8,13 +8,6 @@ import GalleryCategorySection from '../components/GalleryCategorySection';
 import Counter from '../components/Counter';
 import { useOwlCarousel } from '../hooks/useOwlCarousel';
 
-const ICON_BOXES = [
-  { icon: 'flaticon-room-service', title: 'Restaurants', text: 'Fine dining crafted by award-winning chefs.' },
-  { icon: 'flaticon-stones', title: 'Wellness & Spa', text: 'Rejuvenate mind and body in our tranquil spa.' },
-  { icon: 'flaticon-wifi', title: 'Free Wifi', text: 'Stay connected with complimentary high-speed Wi-Fi.' },
-  { icon: 'flaticon-cards', title: 'Game Zone', text: 'Unwind with games for every member of the family.' },
-];
-
 const ABOUT_SLIDES = [1, 2, 3, 4, 5];
 
 function isExternalLink(url) {
@@ -315,66 +308,6 @@ function RoomsCarousel({ rooms }) {
   );
 }
 
-function formatBlogDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-// "OUR BLOG" — reuses the same BlogPost data/admin panel as the /news page,
-// showing the two most recent posts, same markup as the reference's
-// blog-post latest-blog-1 date-style-2 cards.
-function BlogSection({ posts }) {
-  if (!posts || posts.length === 0) return null;
-  return (
-    <div className="section-full p-t90 p-b60 bg-white">
-      <div className="container">
-        <div className="section-head text-left">
-          <h2 className="m-b5" data-title="Blog">Our Latest Blog</h2>
-          <div className="wt-separator-outer">
-            <div className="wt-separator site-bg-primary" />
-          </div>
-        </div>
-        <div className="section-content">
-          <div className="row">
-            {posts.slice(0, 2).map((post) => (
-              <div className="col-lg-6 col-md-6" key={post._id}>
-                <div className="blog-post latest-blog-1 date-style-2">
-                  <div className="wt-post-media wt-img-effect zoom-slow">
-                    <Link to={`/news/${post.slug}`}>
-                      <img src={post.coverImage?.url || '/assets/images/blog/pic1.jpg'} alt={post.title} />
-                    </Link>
-                  </div>
-                  <div className="wt-post-info">
-                    <div className="post-date"><strong>{formatBlogDate(post.publishedAt || post.createdAt)}</strong></div>
-                    <div className="wt-post-meta">
-                      <ul className="clearfix">
-                        <li className="post-author">
-                          <div className="post-author-pic">
-                            <span><strong> By</strong> <Link to={`/news/${post.slug}`}>{post.author}</Link></span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="wt-post-title">
-                      <h3 className="post-title"><Link to={`/news/${post.slug}`}>{post.title}</Link></h3>
-                    </div>
-                    <div className="wt-post-text">
-                      <p>{post.excerpt}</p>
-                    </div>
-                    <div className="readmore-line">
-                      <Link to={`/news/${post.slug}`} className="site-button-ink site-text-primary font-weight-900">Read More</Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // "OUR SPECIALIZATION" — full-bleed background image swaps on hover of the
 // four feature tiles, exactly like the reference's bg-changer + hover_tab()
 // jQuery behaviour, reimplemented as local React state (same pattern the
@@ -596,8 +529,8 @@ export default function Home() {
   const [rooms, setRooms] = useState([]);
   const [loadingHeroes, setLoadingHeroes] = useState(true);
   const [loadingRooms, setLoadingRooms] = useState(true);
-  const [blogPosts, setBlogPosts] = useState([]);
   const [specialization, setSpecialization] = useState(null);
+  const [aboutSection, setAboutSection] = useState(null);
   const [services, setServices] = useState([]);
   const [galleryCategories, setGalleryCategories] = useState([]);
   const [facilities, setFacilities] = useState([]);
@@ -642,8 +575,8 @@ export default function Home() {
 
   useEffect(() => {
     let active = true;
-    api.get('/blog').then(({ data }) => active && setBlogPosts(data.data)).catch(() => {});
     api.get('/specialization').then(({ data }) => active && setSpecialization(data.data)).catch(() => {});
+    api.get('/about-section').then(({ data }) => active && setAboutSection(data.data)).catch(() => {});
     api.get('/services').then(({ data }) => active && setServices(data.data)).catch(() => {});
     api.get('/gallery-categories/featured').then(({ data }) => active && setGalleryCategories(data.data)).catch(() => {});
     api.get('/facilities').then(({ data }) => active && setFacilities(data.data)).catch(() => {});
@@ -691,19 +624,19 @@ export default function Home() {
           <div className="row d-flex align-items-center">
             <div className="col-lg-6 col-md-12 text-black">
               <div className="section-head text-left">
-                <h2 className="m-b5" data-title="About">About Awadh Palace</h2>
+                <h2 className="m-b5" data-title="About">{aboutSection?.heading || 'About Awadh Palace'}</h2>
                 <div className="wt-separator-outer">
                   <div className="wt-separator site-bg-primary" />
                 </div>
               </div>
-              <h3 className="m-t0">We will be so proud to have you as our guest.</h3>
+              <h3 className="m-t0">{aboutSection?.subheading || 'We will be so proud to have you as our guest.'}</h3>
               <p>
-                From the moment you arrive, our team is dedicated to making your stay unforgettable —
-                thoughtful service, comfortable rooms, and amenities designed around you.
+                {aboutSection?.text ||
+                  'From the moment you arrive, our team is dedicated to making your stay unforgettable — thoughtful service, comfortable rooms, and amenities designed around you.'}
               </p>
               <div className="row equal-wraper">
-                {ICON_BOXES.map((box) => (
-                  <div className="col-md-6 m-b30" key={box.title}>
+                {(aboutSection?.boxes || []).map((box) => (
+                  <div className="col-md-6 m-b30" key={box._id}>
                     <div className="wt-icon-box-wraper left bg-gray p-a20 hover-box-effect v-icon-effect equal-col">
                       <div className="icon-md m-b20">
                         <span className="icon-cell"><i className={`${box.icon} v-icon`} /></span>
@@ -716,9 +649,15 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <Link to="/about" className="btn-half site-button button-lg m-b30">
-                <span>More About</span><em />
-              </Link>
+              {isExternalLink(aboutSection?.buttonLink) ? (
+                <a href={aboutSection.buttonLink} className="btn-half site-button button-lg m-b30">
+                  <span>{aboutSection?.buttonText || 'More About'}</span><em />
+                </a>
+              ) : (
+                <Link to={aboutSection?.buttonLink || '/about'} className="btn-half site-button button-lg m-b30">
+                  <span>{aboutSection?.buttonText || 'More About'}</span><em />
+                </Link>
+              )}
             </div>
 
             <div className="col-lg-6 col-md-12">
@@ -742,9 +681,6 @@ export default function Home() {
 
     {/* ROOMS & FACILITIES */}
     <RoomsFacilitiesSection rooms={rooms} loadingRooms={loadingRooms} facilities={facilities} />
-
-    {/* BLOG */}
-    <BlogSection posts={blogPosts} />
 
     {/* SPECIALIZATION */}
     <SpecializationSection data={specialization} />

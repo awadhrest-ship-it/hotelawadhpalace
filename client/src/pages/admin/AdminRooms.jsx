@@ -11,15 +11,20 @@ const emptyForm = {
   capacityAdults: 2,
   capacityChildren: 0,
   sizeSqft: '',
+  sizeSqmt: '',
   bedType: '',
+  bathroomCount: 1,
+  view: '',
   totalUnits: 1,
   featured: false,
   status: 'active',
+  amenities: [],
 };
 
 export default function AdminRooms() {
   const [rooms, setRooms] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [amenities, setAmenities] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
@@ -27,9 +32,14 @@ export default function AdminRooms() {
   const [uploadingId, setUploadingId] = useState(null);
 
   const load = async () => {
-    const [roomsRes, catRes] = await Promise.all([api.get('/rooms'), api.get('/categories')]);
+    const [roomsRes, catRes, amenityRes] = await Promise.all([
+      api.get('/rooms'),
+      api.get('/categories'),
+      api.get('/amenities'),
+    ]);
     setRooms(roomsRes.data.data);
     setCategories(catRes.data.data);
+    setAmenities(amenityRes.data.data);
   };
 
   useEffect(() => {
@@ -39,6 +49,13 @@ export default function AdminRooms() {
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const toggleAmenity = (id) => {
+    setForm((f) => {
+      const has = f.amenities.includes(id);
+      return { ...f, amenities: has ? f.amenities.filter((a) => a !== id) : [...f.amenities, id] };
+    });
   };
 
   const startEdit = (room) => {
@@ -53,10 +70,14 @@ export default function AdminRooms() {
       capacityAdults: room.capacityAdults,
       capacityChildren: room.capacityChildren,
       sizeSqft: room.sizeSqft || '',
+      sizeSqmt: room.sizeSqmt || '',
       bedType: room.bedType || '',
+      bathroomCount: room.bathroomCount ?? 1,
+      view: room.view || '',
       totalUnits: room.totalUnits,
       featured: room.featured,
       status: room.status,
+      amenities: (room.amenities || []).map((a) => (a._id ? a._id : a)),
     });
   };
 
@@ -76,7 +97,10 @@ export default function AdminRooms() {
         capacityAdults: Number(form.capacityAdults),
         capacityChildren: Number(form.capacityChildren),
         sizeSqft: form.sizeSqft ? Number(form.sizeSqft) : undefined,
+        sizeSqmt: form.sizeSqmt ? Number(form.sizeSqmt) : undefined,
+        bathroomCount: form.bathroomCount !== '' ? Number(form.bathroomCount) : undefined,
         totalUnits: Number(form.totalUnits),
+        amenities: form.amenities,
       };
       if (editingId) {
         await api.put(`/rooms/${editingId}`, payload);
@@ -128,6 +152,11 @@ export default function AdminRooms() {
   return (
     <div>
       <h1>Rooms</h1>
+      <p style={{ color: '#666', fontSize: 13, marginTop: -6 }}>
+        Manage room types, pricing, images, and details here. Need a new category (Deluxe, Executive, Suite&hellip;)
+        or a new feature tag (Wi-Fi, Study Room, Smoking Room&hellip;)? Head to the <strong>Room Categories</strong> or{' '}
+        <strong>Room Features</strong> pages in the sidebar first, then come back to assign them.
+      </p>
       {error && <p style={{ color: '#c0392b' }}>{error}</p>}
 
       <form onSubmit={submit} style={card}>
@@ -167,8 +196,20 @@ export default function AdminRooms() {
             <input name="sizeSqft" type="number" min="0" value={form.sizeSqft} onChange={onChange} style={input} />
           </div>
           <div>
+            <label style={label}>Size (sq.mt)</label>
+            <input name="sizeSqmt" type="number" min="0" value={form.sizeSqmt} onChange={onChange} style={input} />
+          </div>
+          <div>
             <label style={label}>Bed type</label>
-            <input name="bedType" value={form.bedType} onChange={onChange} style={input} />
+            <input name="bedType" value={form.bedType} onChange={onChange} placeholder="e.g. 1 King Bed" style={input} />
+          </div>
+          <div>
+            <label style={label}>Bathrooms</label>
+            <input name="bathroomCount" type="number" min="0" value={form.bathroomCount} onChange={onChange} style={input} />
+          </div>
+          <div>
+            <label style={label}>View</label>
+            <input name="view" value={form.view} onChange={onChange} placeholder="e.g. City View, Garden View" style={input} />
           </div>
           <div>
             <label style={label}>Total units</label>
@@ -190,6 +231,27 @@ export default function AdminRooms() {
         <div style={{ margin: '10px 0' }}>
           <label style={label}>Description</label>
           <textarea name="description" rows="3" value={form.description} onChange={onChange} required style={input} />
+        </div>
+        <div style={{ margin: '10px 0' }}>
+          <label style={label}>Features / Amenities</label>
+          {amenities.length === 0 ? (
+            <p style={{ fontSize: 13, color: '#777' }}>
+              No features yet &mdash; add some on the <em>Room Features</em> page first.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>
+              {amenities.map((a) => (
+                <label key={a._id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+                  <input
+                    type="checkbox"
+                    checked={form.amenities.includes(a._id)}
+                    onChange={() => toggleAmenity(a._id)}
+                  />
+                  {a.name}
+                </label>
+              ))}
+            </div>
+          )}
         </div>
         <label style={{ ...label, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" name="featured" checked={form.featured} onChange={onChange} /> Featured
@@ -244,6 +306,18 @@ export default function AdminRooms() {
                 {room.category?.name} &middot; ${room.price.toFixed(2)}/night &middot; {room.status}
                 {room.featured ? ' \u2605 featured' : ''}
               </p>
+              <p style={{ margin: '0 0 8px', color: '#777', fontSize: 13 }}>
+                {room.sizeSqft ? `${room.sizeSqft} sqft` : ''}
+                {room.sizeSqmt ? ` (${room.sizeSqmt} sq.mt)` : ''}
+                {room.bedType ? ` \u00b7 ${room.bedType}` : ''}
+                {room.bathroomCount ? ` \u00b7 ${room.bathroomCount} Bathroom${room.bathroomCount > 1 ? 's' : ''}` : ''}
+                {room.view ? ` \u00b7 ${room.view}` : ''}
+              </p>
+              {room.amenities?.length > 0 && (
+                <p style={{ margin: '0 0 8px', color: '#555', fontSize: 12 }}>
+                  {room.amenities.map((a) => a.name).join(' \u00b7 ')}
+                </p>
+              )}
               <p style={{ fontSize: 13 }}>{room.shortDescription || room.description}</p>
               <button type="button" style={btnSecondary} onClick={() => startEdit(room)}>Edit</button>
               <button type="button" style={btnDanger} onClick={() => remove(room._id)}>Delete</button>

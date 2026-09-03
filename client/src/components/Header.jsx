@@ -18,8 +18,8 @@ const NAV = [
     to: '/gallery',
   },
   {
-    label: 'Blog',
-    to: '/news',
+    label: 'Booking',
+    to: '/rooms',
   },
   {
     label: 'Contact',

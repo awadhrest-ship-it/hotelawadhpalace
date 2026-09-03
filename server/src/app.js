@@ -26,6 +26,7 @@ import dashboardRoutes from './routes/dashboard.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import heroRoutes from './routes/hero.routes.js';
 import aboutRoutes from './routes/about.routes.js';
+import aboutSectionRoutes from './routes/about-section.routes.js';
 import serviceRoutes from './routes/service.routes.js';
 import partnerRoutes from './routes/partner.routes.js';
 import teamRoutes from './routes/team.routes.js';
@@ -102,6 +103,7 @@ export function createApp() {
   app.use('/api/admins', adminRoutes);
   app.use('/api/hero', heroRoutes);
   app.use('/api/about-images', aboutRoutes);
+  app.use('/api/about-section', aboutSectionRoutes);
   app.use('/api/services', serviceRoutes);
   app.use('/api/partners', partnerRoutes);
   app.use('/api/team', teamRoutes);

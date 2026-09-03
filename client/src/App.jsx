@@ -17,7 +17,10 @@ import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminHero from './pages/admin/AdminHero';
 import AdminAboutImages from './pages/admin/AdminAboutImages';
+import AdminAboutSection from './pages/admin/AdminAboutSection';
 import AdminRooms from './pages/admin/AdminRooms';
+import AdminRoomCategories from './pages/admin/AdminRoomCategories';
+import AdminAmenities from './pages/admin/AdminAmenities';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminEnquiries from './pages/admin/AdminEnquiries';
 import AdminBlog from './pages/admin/AdminBlog';
@@ -50,7 +53,10 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="hero" element={<AdminHero />} />
           <Route path="about-images" element={<AdminAboutImages />} />
+          <Route path="about-section" element={<AdminAboutSection />} />
           <Route path="rooms" element={<AdminRooms />} />
+          <Route path="room-categories" element={<AdminRoomCategories />} />
+          <Route path="amenities" element={<AdminAmenities />} />
           <Route path="facilities" element={<AdminFacilities />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="enquiries" element={<AdminEnquiries />} />

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { imageSchema } from './shared/imageSchema.js';
 
 const siteSettingSchema = new mongoose.Schema(
   {
@@ -15,6 +16,7 @@ const siteSettingSchema = new mongoose.Schema(
     },
     checkInTime: { type: String, default: '12:00 PM' },
     checkOutTime: { type: String, default: '11:00 AM' },
+    testimonialsBgImage: imageSchema,
   },
   { timestamps: true }
 );

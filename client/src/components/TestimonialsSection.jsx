@@ -5,6 +5,7 @@ import { useOwlCarousel } from '../hooks/useOwlCarousel';
 export default function TestimonialsSection() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bgImage, setBgImage] = useState('/assets/images/background/bg-2.jpg');
 
   useEffect(() => {
     let active = true;
@@ -14,6 +15,14 @@ export default function TestimonialsSection() {
         if (active) setItems(data.data);
       })
       .finally(() => active && setLoading(false));
+    api
+      .get('/settings')
+      .then(({ data }) => {
+        if (active && data.data?.testimonialsBgImage?.url) {
+          setBgImage(data.data.testimonialsBgImage.url);
+        }
+      })
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -37,7 +46,7 @@ export default function TestimonialsSection() {
   return (
     <div
       className="section-full p-tb90 overlay-wraper"
-      style={{ backgroundImage: 'url(/assets/images/background/bg-2.jpg)' }}
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="overlay-main opacity-05 bg-black" />
       <div className="container">

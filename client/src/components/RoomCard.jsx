@@ -29,6 +29,11 @@ export default function RoomCard({ room }) {
                   <i className="fa fa-bed" /> <strong>Bed:</strong> {room.bedType}
                 </li>
               )}
+              {room.view && (
+                <li>
+                  <i className="fa fa-binoculars" /> <strong>View:</strong> {room.view}
+                </li>
+              )}
             </ul>
           </div>
         </div>

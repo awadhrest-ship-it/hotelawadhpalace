@@ -4,8 +4,11 @@ import { useAdminAuth } from '../../context/AdminAuthContext';
 const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/hero', label: 'Hero Images' },
+  { to: '/admin/about-section', label: 'About Section' },
   { to: '/admin/about-images', label: 'About Images' },
   { to: '/admin/rooms', label: 'Rooms' },
+  { to: '/admin/room-categories', label: 'Room Categories' },
+  { to: '/admin/amenities', label: 'Room Features' },
   { to: '/admin/facilities', label: 'Rooms & Suites Tabs' },
   { to: '/admin/bookings', label: 'Bookings' },
   { to: '/admin/enquiries', label: 'Enquiries' },

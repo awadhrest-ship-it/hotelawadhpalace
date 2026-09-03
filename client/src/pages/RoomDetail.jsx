@@ -123,12 +123,22 @@ export default function RoomDetail() {
                 </div>
                 {room.sizeSqft && (
                   <div className="col-md-4">
-                    <strong>Size:</strong> {room.sizeSqft} sqft
+                    <strong>Size:</strong> {room.sizeSqft} sq.ft{room.sizeSqmt ? ` (${room.sizeSqmt} sq.mt)` : ''}
                   </div>
                 )}
                 {room.bedType && (
                   <div className="col-md-4">
                     <strong>Bed:</strong> {room.bedType}
+                  </div>
+                )}
+                {!!room.bathroomCount && (
+                  <div className="col-md-4">
+                    <strong>Bathroom{room.bathroomCount > 1 ? 's' : ''}:</strong> {room.bathroomCount}
+                  </div>
+                )}
+                {room.view && (
+                  <div className="col-md-4">
+                    <strong>View:</strong> {room.view}
                   </div>
                 )}
               </div>

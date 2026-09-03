@@ -12,7 +12,10 @@ const roomSchema = new mongoose.Schema(
     capacityAdults: { type: Number, required: true, min: 1 },
     capacityChildren: { type: Number, default: 0, min: 0 },
     sizeSqft: { type: Number },
+    sizeSqmt: { type: Number },
     bedType: { type: String, default: '' },
+    bathroomCount: { type: Number, default: 1, min: 0 },
+    view: { type: String, default: '' }, // e.g. "City View", "Garden View"
     amenities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Amenity' }],
     images: [imageSchema],
     featured: { type: Boolean, default: false },
