@@ -6912,17 +6912,20 @@ width:10px;
 
 
 
-@media only screen and (max-width:991px){
 /* Equal-height amenity/feature boxes (About page + Homepage "About" section).
    Bootstrap's .row is already a flex container, so making each column a
    flex item and letting the box fill it stretches every box in a row to
-   match the tallest one, regardless of how much text it has. */
+   match the tallest one, regardless of how much text it has.
+   Applied unconditionally (not just under the 991px media query below) so
+   the boxes stay equal height on desktop too. */
 .row.equal-wraper > [class*="col-"] {
 	display: flex;
 }
 .row.equal-wraper .wt-icon-box-wraper.equal-col {
 	width: 100%;
 }
+
+@media only screen and (max-width:991px){
 .our-team-reverse .row .equal-col{
 	height:inherit !important;
 }	
