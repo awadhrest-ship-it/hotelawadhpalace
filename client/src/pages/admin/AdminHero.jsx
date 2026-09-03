@@ -7,6 +7,8 @@ export default function AdminHero() {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ title: '', subtitle: '', buttonText: '', buttonLink: '', showButton: true });
+  const [orderDrafts, setOrderDrafts] = useState({});
+  const [savingOrderId, setSavingOrderId] = useState(null);
 
   const load = async () => {
     const { data } = await api.get('/hero/admin/all');
@@ -80,6 +82,30 @@ export default function AdminHero() {
     }
   };
 
+  const saveOrder = async (id) => {
+    const draft = orderDrafts[id];
+    const newOrder = Number(draft);
+    if (draft === undefined || draft === '' || Number.isNaN(newOrder)) {
+      setError('Please enter a valid number for order.');
+      return;
+    }
+    setSavingOrderId(id);
+    setError('');
+    try {
+      await api.put(`/hero/${id}`, { order: newOrder });
+      setOrderDrafts((d) => {
+        const next = { ...d };
+        delete next[id];
+        return next;
+      });
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSavingOrderId(null);
+    }
+  };
+
   return (
     <div>
       <h1>Hero Images (Homepage Slider)</h1>
@@ -104,7 +130,28 @@ export default function AdminHero() {
           <div style={{ display: 'flex', gap: 20 }}>
             <div style={{ width: 200 }}>
               <img src={hero.image.url} alt={hero.title} style={{ width: '100%', height: 150, objectFit: 'cover', display: 'block', borderRadius: 4 }} />
-              <div style={{ fontSize: 12, color: '#999', marginTop: 8 }}>Order: {idx + 1}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <label style={{ fontSize: 12, color: '#999' }}>Order:</label>
+                <input
+                  type="number"
+                  value={orderDrafts[hero._id] !== undefined ? orderDrafts[hero._id] : (hero.order ?? idx + 1)}
+                  onChange={(e) =>
+                    setOrderDrafts((d) => ({ ...d, [hero._id]: e.target.value }))
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveOrder(hero._id);
+                  }}
+                  style={{ ...input, width: 60, padding: '4px 6px', fontSize: 12 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => saveOrder(hero._id)}
+                  disabled={savingOrderId === hero._id || orderDrafts[hero._id] === undefined}
+                  style={{ ...btnSecondary, padding: '4px 10px', fontSize: 12, marginRight: 0 }}
+                >
+                  {savingOrderId === hero._id ? 'Saving...' : 'Save'}
+                </button>
+              </div>
             </div>
 
             <div style={{ flex: 1 }}>
