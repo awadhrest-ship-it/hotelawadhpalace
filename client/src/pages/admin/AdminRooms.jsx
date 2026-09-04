@@ -37,7 +37,11 @@ export default function AdminRooms() {
       api.get('/categories'),
       api.get('/amenities'),
     ]);
-    setRooms(roomsRes.data.data);
+    setRooms(
+      [...roomsRes.data.data].sort(
+        (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+      )
+    );
     setCategories(catRes.data.data);
     setAmenities(amenityRes.data.data);
   };
@@ -123,6 +127,20 @@ export default function AdminRooms() {
       await load();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const moveRoom = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= rooms.length) return;
+    const reordered = [...rooms];
+    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+    setRooms(reordered); // optimistic update so the list re-orders instantly
+    try {
+      await api.put('/rooms/reorder', { order: reordered.map((r) => r._id) });
+    } catch (err) {
+      setError(err.message);
+      await load(); // revert to server order on failure
     }
   };
 
@@ -269,8 +287,32 @@ export default function AdminRooms() {
       </form>
 
       <div style={{ marginTop: 30 }}>
-        {rooms.map((room) => (
+        <p style={{ color: '#666', fontSize: 13 }}>
+          Use the &uarr;/&darr; buttons to control the order rooms appear in on the Home page and the Rooms &amp;
+          Suites page &mdash; top of this list shows first.
+        </p>
+        {rooms.map((room, index) => (
           <div key={room._id} style={{ ...card, display: 'flex', gap: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={() => moveRoom(index, -1)}
+                disabled={index === 0}
+                style={{ ...btnSecondary, marginRight: 0, padding: '6px 10px', opacity: index === 0 ? 0.4 : 1 }}
+                title="Move up"
+              >
+                &uarr;
+              </button>
+              <button
+                type="button"
+                onClick={() => moveRoom(index, 1)}
+                disabled={index === rooms.length - 1}
+                style={{ ...btnSecondary, marginRight: 0, padding: '6px 10px', opacity: index === rooms.length - 1 ? 0.4 : 1 }}
+                title="Move down"
+              >
+                &darr;
+              </button>
+            </div>
             <div style={{ width: 160 }}>
               {room.images?.[0]?.url && (
                 <img src={room.images[0].url} alt={room.name} style={{ width: '100%', borderRadius: 4 }} />

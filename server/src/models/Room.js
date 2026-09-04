@@ -25,10 +25,12 @@ const roomSchema = new mongoose.Schema(
       default: 'active',
     },
     totalUnits: { type: Number, default: 1, min: 1 }, // number of physical rooms of this type
+    displayOrder: { type: Number, default: 0 }, // controls display order on Home + Rooms pages (lower shows first)
   },
   { timestamps: true }
 );
 
 roomSchema.index({ status: 1, featured: 1 });
+roomSchema.index({ displayOrder: 1 });
 
 export default mongoose.model('Room', roomSchema);

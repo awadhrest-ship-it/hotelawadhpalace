@@ -21,7 +21,7 @@ router.get(
     const filter = { status: 'active' };
     if (category) filter.category = category;
     if (featured === 'true') filter.featured = true;
-    const rooms = await Room.find(filter).populate('category').populate('amenities').sort({ createdAt: -1 });
+    const rooms = await Room.find(filter).populate('category').populate('amenities').sort({ displayOrder: 1, createdAt: -1 });
     res.json({ success: true, data: rooms });
   })
 );
@@ -111,6 +111,21 @@ router.post(
   asyncHandler(async (req, res) => {
     const room = await Room.create(req.body);
     res.status(201).json({ success: true, data: room });
+  })
+);
+
+router.put(
+  '/reorder',
+  requireAuth,
+  [body('order').isArray({ min: 1 })],
+  validate,
+  asyncHandler(async (req, res) => {
+    const { order } = req.body; // array of room _ids in the desired display order
+    await Promise.all(
+      order.map((id, idx) => Room.findByIdAndUpdate(id, { displayOrder: idx }))
+    );
+    const rooms = await Room.find().populate('category').populate('amenities').sort({ displayOrder: 1, createdAt: -1 });
+    res.json({ success: true, data: rooms });
   })
 );
 
