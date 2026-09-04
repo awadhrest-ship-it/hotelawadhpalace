@@ -393,10 +393,10 @@ function ServicesSection({ services }) {
             <div className="wt-separator site-bg-primary" />
           </div>
         </div>
-        <div className="row">
+        <div className="row equal-wraper">
           {services.map((s) => (
             <div className="col-lg-4 col-md-6" key={s._id}>
-              <div className="wt-icon-box-wraper center bdr-1 bdr-gray-light bdr-solid m-b30 p-a20 hover-box-effect v-icon-effect">
+              <div className="wt-icon-box-wraper center bdr-1 bdr-gray-light bdr-solid m-b30 p-a20 hover-box-effect v-icon-effect equal-col">
                 <div className="icon-md m-b20">
                   <span className="icon-cell"><i className={`${s.icon} v-icon`} /></span>
                 </div>

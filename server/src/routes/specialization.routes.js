@@ -10,9 +10,10 @@ const router = Router();
 // Default content mirrors the reference template exactly, so the section
 // renders correctly even before an admin has customised anything.
 const DEFAULT_TEXT =
-  "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Mauris fermentum dictum magna. " +
-  'Sed laoreet aliquam leo. Ut tellus dolor, dapibus eget, elementum vel, cursus eleifend, elit. ' +
-  'Aenean auctor wisi et urna. Aliquam erat volutpat. Duis ac turpis.';
+  'At Hotel Awadh Palace, luxury is woven into every detail — from beautifully appointed rooms and ' +
+  'warm Awadhi hospitality to attentive service that anticipates your every need. Our team takes pride ' +
+  'in crafting a stay that feels effortless, elegant, and entirely your own, whether you are here to ' +
+  'unwind, celebrate, or do business in comfort.';
 
 // Default image for the About page's "By The Numbers" section background,
 // matching the path that used to be hardcoded in About.jsx.
