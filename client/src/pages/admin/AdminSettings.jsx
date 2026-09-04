@@ -32,6 +32,11 @@ export default function AdminSettings() {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  const onSocialChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, socialLinks: { ...f.socialLinks, [name]: value } }));
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -118,6 +123,54 @@ export default function AdminSettings() {
             <input name="checkOutTime" value={form.checkOutTime} onChange={onChange} style={input} />
           </div>
         </div>
+        <h3 style={{ marginTop: 0 }}>Social links</h3>
+        <p style={{ color: '#666', fontSize: 13, marginTop: -6 }}>
+          All optional. Leave a field blank to hide that icon in the site footer — only the ones
+          you fill in will appear.
+        </p>
+        <div style={grid2}>
+          <div>
+            <label style={label}>Facebook URL</label>
+            <input
+              name="facebook"
+              value={form.socialLinks?.facebook || ''}
+              onChange={onSocialChange}
+              style={input}
+              placeholder="https://facebook.com/yourpage"
+            />
+          </div>
+          <div>
+            <label style={label}>Twitter / RSS URL</label>
+            <input
+              name="twitter"
+              value={form.socialLinks?.twitter || ''}
+              onChange={onSocialChange}
+              style={input}
+              placeholder="https://twitter.com/yourhandle"
+            />
+          </div>
+          <div>
+            <label style={label}>LinkedIn URL</label>
+            <input
+              name="linkedin"
+              value={form.socialLinks?.linkedin || ''}
+              onChange={onSocialChange}
+              style={input}
+              placeholder="https://linkedin.com/company/yourcompany"
+            />
+          </div>
+          <div>
+            <label style={label}>Instagram URL</label>
+            <input
+              name="instagram"
+              value={form.socialLinks?.instagram || ''}
+              onChange={onSocialChange}
+              style={input}
+              placeholder="https://instagram.com/yourhandle"
+            />
+          </div>
+        </div>
+
         <button type="submit" style={btnPrimary} disabled={saving}>
           {saving ? 'Saving...' : 'Save settings'}
         </button>

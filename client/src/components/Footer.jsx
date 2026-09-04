@@ -54,28 +54,27 @@ export default function Footer() {
                   A hospitality experience built on comfort, warmth, and genuine care for every guest
                   who walks through our doors.
                 </p>
-                <ul className="social-icons social-tooltips-outer wt-social-links">
-                  <li>
-                    <a href={settings?.socialLinks?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="fa-brands fa-facebook-f">
-                      <span className="social-tooltips">Facebook</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href={settings?.socialLinks?.twitter || '#'} target="_blank" rel="noopener noreferrer" className="fa fa-rss">
-                      <span className="social-tooltips">Rss</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href={settings?.socialLinks?.linkedin || '#'} target="_blank" rel="noopener noreferrer" className="fa-brands fa-linkedin-in">
-                      <span className="social-tooltips">Linkedin</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href={settings?.socialLinks?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="fa-brands fa-instagram">
-                      <span className="social-tooltips">Instagram</span>
-                    </a>
-                  </li>
-                </ul>
+                {(() => {
+                  const SOCIAL_ICONS = [
+                    { key: 'facebook', label: 'Facebook', className: 'fa-brands fa-facebook-f' },
+                    { key: 'twitter', label: 'Rss', className: 'fa fa-rss' },
+                    { key: 'linkedin', label: 'Linkedin', className: 'fa-brands fa-linkedin-in' },
+                    { key: 'instagram', label: 'Instagram', className: 'fa-brands fa-instagram' },
+                  ];
+                  const activeSocials = SOCIAL_ICONS.filter((s) => settings?.socialLinks?.[s.key]);
+                  if (activeSocials.length === 0) return null;
+                  return (
+                    <ul className="social-icons social-tooltips-outer wt-social-links">
+                      {activeSocials.map((s) => (
+                        <li key={s.key}>
+                          <a href={settings.socialLinks[s.key]} target="_blank" rel="noopener noreferrer" className={s.className}>
+                            <span className="social-tooltips">{s.label}</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                })()}
               </div>
             </div>
 
