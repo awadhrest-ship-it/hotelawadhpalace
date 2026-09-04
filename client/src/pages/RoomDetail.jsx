@@ -172,7 +172,7 @@ export default function RoomDetail() {
 
             <div className="col-lg-4">
               <div className="bg-gray p-a30" style={{ borderRadius: 4 }}>
-                <h3 className="m-t0 m-b20">${room.price.toFixed(2)} / night</h3>
+                <h3 className="m-t0 m-b20">₹{room.price.toFixed(2)} / night</h3>
 
                 {step === 'dates' && (
                   <form onSubmit={checkDates}>
@@ -316,7 +316,7 @@ export default function RoomDetail() {
                       <br />
                       {guest.phone}
                     </p>
-                    <h4>Total: ${estimatedTotal}</h4>
+                    <h4>Total: ₹{estimatedTotal}</h4>
                     {bookingError && <p className="text-danger">{bookingError}</p>}
                     <button type="button" className="site-button btn-half m-r10" onClick={() => setStep('details')}>
                       <span>Back</span><em />
@@ -340,7 +340,7 @@ export default function RoomDetail() {
                       <br />
                       Status: {bookingResult.status}
                       <br />
-                      Total: ${bookingResult.totalAmount.toFixed(2)}
+                      Total: ₹{bookingResult.totalAmount.toFixed(2)}
                     </p>
                     <p>A confirmation has been recorded for {guest.email}. Keep your reference for check-in.</p>
                   </div>

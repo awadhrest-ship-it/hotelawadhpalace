@@ -345,7 +345,7 @@ export default function AdminRooms() {
             <div style={{ flex: 1 }}>
               <h3 style={{ margin: '0 0 4px' }}>{room.name}</h3>
               <p style={{ margin: '0 0 8px', color: '#777', fontSize: 13 }}>
-                {room.category?.name} &middot; ${room.price.toFixed(2)}/night &middot; {room.status}
+                {room.category?.name} &middot; &#8377;{room.price.toFixed(2)}/night &middot; {room.status}
                 {room.featured ? ' \u2605 featured' : ''}
               </p>
               <p style={{ margin: '0 0 8px', color: '#777', fontSize: 13 }}>

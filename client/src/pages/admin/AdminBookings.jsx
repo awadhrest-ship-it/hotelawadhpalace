@@ -63,7 +63,7 @@ export default function AdminBookings() {
               <td style={td}>
                 {new Date(b.checkIn).toLocaleDateString()} &rarr; {new Date(b.checkOut).toLocaleDateString()}
               </td>
-              <td style={td}>${b.totalAmount.toFixed(2)}</td>
+              <td style={td}>₹{b.totalAmount.toFixed(2)}</td>
               <td style={td}>
                 <select value={b.status} onChange={(e) => updateStatus(b._id, e.target.value)}>
                   {STATUSES.map((s) => (

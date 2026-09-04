@@ -27,7 +27,7 @@ export default function AdminDashboard() {
     { label: 'Confirmed Bookings', value: summary.confirmedBookings },
     { label: 'New Enquiries', value: summary.newEnquiries },
     { label: 'Newsletter Subscribers', value: summary.subscribers },
-    { label: 'Total Revenue', value: `$${summary.totalRevenue.toFixed(2)}` },
+    { label: 'Total Revenue', value: `₹${summary.totalRevenue.toFixed(2)}` },
   ];
 
   return (
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
               <td style={td}>{new Date(b.checkIn).toLocaleDateString()}</td>
               <td style={td}>{new Date(b.checkOut).toLocaleDateString()}</td>
               <td style={td}>{b.status}</td>
-              <td style={td}>${b.totalAmount.toFixed(2)}</td>
+              <td style={td}>₹{b.totalAmount.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

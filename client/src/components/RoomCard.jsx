@@ -14,7 +14,7 @@ export default function RoomCard({ room }) {
             </div>
           </div>
           <div className="room-info-section text-black">
-            <span>${room.price.toFixed(2)}/night</span>
+            <span>₹{room.price.toFixed(2)}/night</span>
             <ul className="clearfix">
               {room.sizeSqft && (
                 <li>
