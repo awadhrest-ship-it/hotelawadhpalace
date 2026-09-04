@@ -127,9 +127,16 @@ export default function Gallery() {
                             <div className="team-social-center">
                               <ul className="team-social-icon">
                                 <li>
-                                  <span style={{ width: 'auto', padding: '0 18px', display: 'inline-block', cursor: 'pointer' }}>
+                                  <a
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      selectCategory(cat._id);
+                                    }}
+                                    style={{ width: 'auto', padding: '0 18px', display: 'inline-block' }}
+                                  >
                                     View
-                                  </span>
+                                  </a>
                                 </li>
                               </ul>
                             </div>

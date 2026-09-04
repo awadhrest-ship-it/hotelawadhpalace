@@ -7,7 +7,7 @@ import './maintenance.css';
  *  Format: 'YYYY-MM-DDTHH:MM:SS+05:30'  (+05:30 = India Standard Time)
  * ---------------------------------------------------------------------
  */
-const EXPECTED_BACK_ONLINE = '2026-09-04T15:15:00+05:30';
+const EXPECTED_BACK_ONLINE = '2026-09-05T22:00:00+05:30';
 
 function getRemaining(targetISO) {
   const total = new Date(targetISO).getTime() - Date.now();
