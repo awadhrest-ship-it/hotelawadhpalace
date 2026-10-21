@@ -21,6 +21,7 @@ import blogRoutes from './routes/blog.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
 import galleryCategoryRoutes from './routes/gallery-categories.routes.js';
 import testimonialRoutes from './routes/testimonial.routes.js';
+import feedbackRoutes from './routes/feedback.routes.js';
 import settingRoutes from './routes/setting.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import adminRoutes from './routes/admin.routes.js';
@@ -104,6 +105,7 @@ export function createApp() {
   app.use('/api/gallery', galleryRoutes);
   app.use('/api/gallery-categories', galleryCategoryRoutes);
   app.use('/api/testimonials', testimonialRoutes);
+  app.use('/api/feedback', feedbackRoutes);
   app.use('/api/settings', settingRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/admins', adminRoutes);

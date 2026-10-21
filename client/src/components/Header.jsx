@@ -22,6 +22,10 @@ const NAV = [
     to: '/rooms',
   },
   {
+    label: 'Feedback',
+    to: '/feedback',
+  },
+  {
     label: 'Contact',
     to: '/contact',
     children: [

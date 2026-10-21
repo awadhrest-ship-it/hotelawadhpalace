@@ -10,6 +10,7 @@ import RoomDetail from './pages/RoomDetail';
 import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
 import Gallery from './pages/Gallery';
+import Feedback from './pages/Feedback';
 import NotFound from './pages/NotFound';
 
 import AdminLogin from './pages/admin/AdminLogin';
@@ -23,6 +24,7 @@ import AdminRoomCategories from './pages/admin/AdminRoomCategories';
 import AdminAmenities from './pages/admin/AdminAmenities';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminEnquiries from './pages/admin/AdminEnquiries';
+import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminBlog from './pages/admin/AdminBlog';
 import AdminGallery from './pages/admin/AdminGallery';
 import AdminGalleryCategories from './pages/admin/AdminGalleryCategories';
@@ -45,6 +47,7 @@ export default function App() {
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -60,6 +63,7 @@ export default function App() {
           <Route path="facilities" element={<AdminFacilities />} />
           <Route path="bookings" element={<AdminBookings />} />
           <Route path="enquiries" element={<AdminEnquiries />} />
+          <Route path="feedback" element={<AdminFeedback />} />
           <Route path="blog" element={<AdminBlog />} />
           <Route path="gallery" element={<AdminGallery />} />
           <Route path="gallery-categories" element={<AdminGalleryCategories />} />

@@ -4,6 +4,7 @@ import api from '../api/client';
 import BookingSearchForm from '../components/BookingSearchForm';
 import RoomCard from '../components/RoomCard';
 import TestimonialsSection from '../components/TestimonialsSection';
+import FeaturedFeedbackSection from '../components/FeaturedFeedbackSection';
 import GalleryCategorySection from '../components/GalleryCategorySection';
 import Counter from '../components/Counter';
 import { useOwlCarousel } from '../hooks/useOwlCarousel';
@@ -696,6 +697,9 @@ export default function Home() {
     <ServicesSection services={services} />
 
     <TestimonialsSection />
+
+    {/* GUEST FEEDBACK (admin-featured) + "Share Your Feedback" button */}
+    <FeaturedFeedbackSection />
 
     {/* GALLERY CATEGORIES */}
     <GalleryCategorySection categories={galleryCategories} />

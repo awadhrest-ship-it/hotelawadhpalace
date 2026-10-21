@@ -12,6 +12,7 @@ const LINKS = [
   { to: '/admin/facilities', label: 'Rooms & Suites Tabs' },
   { to: '/admin/bookings', label: 'Bookings' },
   { to: '/admin/enquiries', label: 'Enquiries' },
+  { to: '/admin/feedback', label: 'Guest Feedback' },
   { to: '/admin/blog', label: 'Blog Posts' },
   { to: '/admin/gallery', label: 'Gallery Images' },
   { to: '/admin/gallery-categories', label: 'Gallery Categories' },
