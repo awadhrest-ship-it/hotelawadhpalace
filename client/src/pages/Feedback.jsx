@@ -11,6 +11,7 @@ const CATEGORIES = [
   { key: 'service', label: 'Staff & Service' },
   { key: 'comfort', label: 'Room Comfort' },
   { key: 'food', label: 'Food & Dining' },
+  { key: 'bar', label: '90\'s Bar' },
   { key: 'value', label: 'Value for Money' },
 ];
 
@@ -32,7 +33,7 @@ const initialForm = {
 // Inline opacity:1 brings the native controls back for this form only.
 const NATIVE_INPUT = { opacity: 1, marginRight: 8, verticalAlign: 'middle', cursor: 'pointer', accentColor: '#c9a24b' };
 
-const initialRatings = { overall: 0, cleanliness: 0, service: 0, comfort: 0, food: 0, value: 0 };
+const initialRatings = { overall: 0, cleanliness: 0, service: 0, comfort: 0, food: 0, bar: 0, value: 0 };
 
 export default function Feedback() {
   const [settings, setSettings] = useState(null);
@@ -216,7 +217,7 @@ export default function Feedback() {
                 </div>
                 <div className="col-md-6">
                   <div className="form-group">
-                    <input name="phone" type="tel" maxLength={30} className="form-control" placeholder="Phone (optional)" value={form.phone} onChange={onChange} />
+                    <input name="phone" type="tel" required maxLength={30} className="form-control" placeholder="Phone *" value={form.phone} onChange={onChange} />
                   </div>
                 </div>
                 <div className="col-md-6">

@@ -7,6 +7,7 @@ const CATEGORY_LABELS = {
   service: 'Service',
   comfort: 'Comfort',
   food: 'Food',
+  bar: 'Bar',
   value: 'Value',
 };
 

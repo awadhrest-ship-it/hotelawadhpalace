@@ -16,7 +16,7 @@ const optionalStar = (field) =>
 router.post('/', publicFormLimiter, [
   body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }),
   body('email').optional({ checkFalsy: true }).trim().isEmail().withMessage('Enter a valid email').normalizeEmail(),
-  body('phone').optional({ checkFalsy: true }).trim().isLength({ max: 30 }),
+  body('phone').trim().notEmpty().withMessage('Phone number is required').isLength({ max: 30 }),
   body('city').optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
   body('roomType').optional({ checkFalsy: true }).trim().isLength({ max: 80 }),
   body('stayDate').optional({ checkFalsy: true }).isISO8601().withMessage('Enter a valid stay date').toDate(),
@@ -25,6 +25,7 @@ router.post('/', publicFormLimiter, [
   optionalStar('ratings.service'),
   optionalStar('ratings.comfort'),
   optionalStar('ratings.food'),
+  optionalStar('ratings.bar'),
   optionalStar('ratings.value'),
   body('message').trim().notEmpty().withMessage('Please tell us about your stay').isLength({ max: 2000 }),
   body('wouldRecommend').optional({ checkFalsy: true }).isIn(['yes', 'no']),
@@ -38,7 +39,7 @@ router.post('/', publicFormLimiter, [
 
   // Only keep the star categories the guest actually filled in.
   const cleanRatings = { overall: ratings.overall };
-  ['cleanliness', 'service', 'comfort', 'food', 'value'].forEach((k) => {
+  ['cleanliness', 'service', 'comfort', 'food', 'bar', 'value'].forEach((k) => {
     if (ratings[k]) cleanRatings[k] = ratings[k];
   });
 

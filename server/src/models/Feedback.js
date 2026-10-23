@@ -17,6 +17,7 @@ const feedbackSchema = new mongoose.Schema(
       service: star,
       comfort: star,
       food: star,
+      bar: star,
       value: star,
     },
 
